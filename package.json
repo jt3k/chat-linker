@@ -1,0 +1,18 @@
+{
+  "name": "chat-linker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prod": "NODE_ENV=prod app.js",
+    "dev": "NODE_ENV=dev node --inspect app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-xmpp": "^1.0.4",
+    "telegraf": "^3.3.1"
+  }
+}
