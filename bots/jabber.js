@@ -61,7 +61,7 @@ function send({name, message}) {
 			}
 		)
 		.c('body')
-		.t(`/me @${name} : ${message}`)
+		.t(`<@${name}> ${message}`)
 	);
 }
 
