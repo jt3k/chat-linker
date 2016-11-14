@@ -1,6 +1,6 @@
 {
 	"jabber": {
-		"connect": {
+		"connection": {
 			"jid": "SECRET",
 			"password": "SECRET",
 			"reconnect": true
