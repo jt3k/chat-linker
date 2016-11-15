@@ -27,7 +27,11 @@ client.on('text', (ctx, next) => {
 client.startPolling();
 
 function send ({name, message}) {
-	client.telegram.sendMessage(chat.id, `<${name}> ${message}`)
+	client.telegram.sendMessage(
+		chat.id,
+		`<b>${name}</b>\r${message}`,
+		{parse_mode: 'HTML'}
+	);
 }
 
 module.exports = { client, send };
