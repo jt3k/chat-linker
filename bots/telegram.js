@@ -2,36 +2,37 @@
 //  telegram
 //
 
-const config = require('../app-config').telegram;
-const chat = config[process.env.NODE_ENV];
+const Telegraf = require('telegraf');
 
+const config = require('../app-config').telegram;
 const bus = require('../bus.js');
-const Telegraf = require('telegraf')
+
+const chat = config[process.env.NODE_ENV];
 
 const {BOT_TOKEN} = config;
 
-const client = new Telegraf(BOT_TOKEN)
+const client = new Telegraf(BOT_TOKEN);
 
 client.on('text', (ctx, next) => {
-	const room = ctx.message.chat.title;
-	if (room === chat.title) {
-		const name = ctx.message.from.username;
-		const message = ctx.message.text;
-		const network = 'TELEGRAM';
+  const room = ctx.message.chat.title;
+  if (room === chat.title) {
+    const name = ctx.message.from.username;
+    const message = ctx.message.text;
+    const network = 'TELEGRAM';
 
-        bus.emit('message', { network, room, name, message});
+    bus.emit('message', {network, room, name, message});
 
-        next();
-	}
+    next();
+  }
 });
 client.startPolling();
 
-function send ({name, message}) {
-	client.telegram.sendMessage(
+function send({name, message}) {
+  client.telegram.sendMessage(
 		chat.id,
 		`<b>${name}</b>\r${message}`,
 		{parse_mode: 'HTML'}
 	);
 }
 
-module.exports = { client, send };
+module.exports = {client, send};
