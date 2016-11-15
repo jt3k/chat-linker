@@ -1,4 +1,7 @@
-// events
+//
+//  events
+//
+
 const EventEmitter = require('events');
 
 class Emitter extends EventEmitter {}

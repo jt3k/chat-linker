@@ -1,4 +1,7 @@
-// core
+//
+//  core
+//
+
 const bus = require('./bus.js');
 
 // global for debugging

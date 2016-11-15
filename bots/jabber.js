@@ -1,6 +1,6 @@
-// 
-// jabber
-// 
+//
+//  jabber
+//
 
 const config = require('../app-config').jabber;
 const chat = config[process.env.NODE_ENV];
