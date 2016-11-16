@@ -30,7 +30,7 @@ client.startPolling();
 function send({name, message}) {
   client.telegram.sendMessage(
 		chat.id,
-		`<b>${name}</b>\r${message}`,
+		`<b>${name}</b>\n${message}`,
 		{parse_mode: 'HTML'}
 	);
 }
