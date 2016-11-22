@@ -39,15 +39,15 @@ internal.prepareMessage = function (ctx) {
     }
 
     // adds quoting brackets
-    message = message.replace(/\n/g,'\n>> ');
+    message = message.replace(/\n/g, '\n>> ');
 
     return `>> <${nick}> ${message}\n${ctx.message.text}`;
-  } else {
-    //
-    // is no-reply //
-    //
-    return ctx.message.text;
   }
+
+  //
+  // is no-reply //
+  //
+  return ctx.message.text;
 };
 
 client.on('text', (ctx, next) => {
