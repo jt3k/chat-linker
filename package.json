@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "xo",
     "prod": "NODE_ENV=prod app.js",
     "dev": "NODE_ENV=dev node --inspect app.js"
   },
@@ -14,5 +14,17 @@
   "dependencies": {
     "node-xmpp": "^1.0.4",
     "telegraf": "^3.3.1"
+  },
+  "devDependencies": {
+    "xo": "^0.17.1"
+  },
+  "xo": {
+    "esnext": true,
+    "envs": ["node"],
+    "rules": {
+      "camelcase": ["error", {"properties": "never"}]
+    },
+    "space": true,
+    "semicolon": true
   }
 }
