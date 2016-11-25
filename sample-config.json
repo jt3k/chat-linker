@@ -1,0 +1,31 @@
+{
+  "jabber": {
+    "connection": {
+      "jid": "SECRET",
+      "password": "SECRET",
+      "reconnect": true
+    },
+    "dev": {
+      "room": "bimo_test@conference.jabber.ru",
+      "nick": "tg"
+    },
+    "prod": {
+      "room": "javascript@conference.jabber.ru",
+      "nick": "tg"
+    }
+  },
+  "telegram": {
+    "BOT_TOKEN": "SECRET",
+    "dev": {
+      "id": -1001054401089,
+      "title": "bimo_test",
+      "type": "supergroup"
+    },
+    "prod": {
+      "id": -1001050591912,
+      "title": "javascript",
+      "username": "javascript_ru",
+      "type": "supergroup"
+    }
+  }
+}
