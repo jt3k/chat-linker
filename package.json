@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "xo",
-    "precommit": "npm test && ./crypter.js enc",
-    "prepush":   "npm test && ./crypter.js enc",
+    "precommit": "npm test",
+    "prepush":   "npm test",
     "postreceive": "./crypter.js dec",
 
     "prod": "NODE_ENV=prod app.js",
