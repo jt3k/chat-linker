@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "xo",
+    "precommit": "npm test",
+    "prepush":   "npm test",
     "prod": "NODE_ENV=prod app.js",
     "dev": "NODE_ENV=dev node --inspect app.js"
   },
