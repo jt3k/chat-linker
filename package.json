@@ -27,7 +27,8 @@
     "esnext": true,
     "envs": ["node"],
     "rules": {
-      "camelcase": ["error", {"properties": "never"}]
+      "camelcase": ["error", {"properties": "never"}],
+      "import/no-unresolved": [0]
     },
     "space": true,
     "semicolon": true
