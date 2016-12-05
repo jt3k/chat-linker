@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+- v6
+
+script: npm test
+cache:
+  yarn: true
+  npm: true
+deploy:
+  provider: heroku
+  api_key:
+    secure: l6M8vLCDwfO8fIt7sEppCATLz7omQpYseOvmzvvEgZSpCaveMk4kUYzjkffw98h33ahFTwYdr840yrY5EK/Wxm0iCbOkArmHaDVAip6L2NJZvij9bzRy9jJcDZIWfWeM1vbRIYndtAS3mqpKjqKUEPu+UZOF8vXajOKMlDtT1GahUIaDTqJNvAiLVoGDybvtQUyYSW/n3BdnWyQQKqSbVcT0qcgS+C8ivB9tYKndLOyGrQEjBST5MEsGPHvFxZKZQCZKBydzwiseWbhYTD0VWGqFtubh6GvATqb8fPrc3cYu/AqU5wE9FSaZhcSDqfhtJcOyxdCjsO/cBc1busMHbYHpoSh8/JyhQ8Mn0U20LPPyYWV3D+D5YPyuYeNStC6Hf9xD+qoMrxSvJqTbw1PLKGUatcH3jVrou3/S+yBmKY9J0u9vn4Zm97+FxfftNA8GATHZ+su5ZsCRAZ1w0fLfYmqPTv0jfwSgVbtLHoo5dp9/MFudZdQRHvcvOtRTHPCNLzRcpE9CcX6j5qwLFAWJyPYTbgRF8vEH3WDvIhZ1/ybi1/MNFP68Ip5atYNS5Pi/D6gW8WPaugvMVvos2uO8AjBajpjDdFTvt4zNgGPyOftbX0NIgs1WyvJZJM4TGlekJ/NnP80hCOVx1DmCvKogf2FavMB5sfHKBJC2J61UaZc=

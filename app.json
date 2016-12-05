@@ -1,0 +1,8 @@
+{
+  "name": "Start on Heroku: Node.js",
+  "description": "bridge between chat networks",
+  "repository": "github.com/jt3k/chat-linker",
+  "logo": "http://node-js-sample.herokuapp.com/node.svg",
+  "keywords": ["node"],
+  "image": "heroku/nodejs"
+}
