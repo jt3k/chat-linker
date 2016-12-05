@@ -1,3 +1,11 @@
+// ////////////////////////////////
+// FOR HEROKU "HEARTBEAT" POLING //
+// ////////////////////////////////
+const handleRequest = (request, response) => {
+  response.end('Works');
+};
+require('http').createServer(handleRequest).listen(5000);
+
 //
 //  core
 //
@@ -19,11 +27,3 @@ bus.on('message', ({network, room, name, message}) => {
     jabber.send({name, message});
   }
 });
-
-// ////////////////////////////////
-// FOR HEROKU "HEARTBEAT" POLING //
-// ////////////////////////////////
-const handleRequest = (request, response) => {
-  response.end('Works');
-};
-require('http').createServer(handleRequest).listen(5000);
