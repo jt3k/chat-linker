@@ -4,7 +4,7 @@
 const handleRequest = (request, response) => {
   response.end('Works');
 };
-require('http').createServer(handleRequest).listen(5000);
+require('http').createServer(handleRequest).listen(process.env.PORT || 5000);
 
 //
 //  core
