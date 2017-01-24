@@ -42,6 +42,7 @@ client.on('stanza', stanza => {
       const from = new jid(stanza.attr('from'));
       const room = from.full;
       const name = from.resource;
+      const network = 'JABBER';
 
       bus.emit('message', {network, room, name, message});
     }
