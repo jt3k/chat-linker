@@ -66,10 +66,8 @@ client.on('text', (ctx, next) => {
 client.startPolling();
 
 function send({name, message}) {
-  message = message
-    .replace(/\&/g, '&amp;')
-    .replace(/\</g, '&lt;')
-    .replace(/\>/g, '&gt;');
+  message = htmlEscape(message)
+  name = htmlEscape(name)
 
   client.telegram.sendMessage(
 		chat.id,
@@ -77,5 +75,13 @@ function send({name, message}) {
 		{parse_mode: 'HTML'}
 	);
 }
+
+const htmlEscape = str => (
+            str
+              .replace(/\&/g, '&amp;')
+              .replace(/\</g, '&lt;')
+              .replace(/\>/g, '&gt;')
+                          );
+
 
 module.exports = {client, send};
