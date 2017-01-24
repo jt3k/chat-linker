@@ -66,6 +66,11 @@ client.on('text', (ctx, next) => {
 client.startPolling();
 
 function send({name, message}) {
+  message = message
+    .replace(/\&/g, '&amp;')
+    .replace(/\</g, '&lt;')
+    .replace(/\>/g, '&gt;');
+
   client.telegram.sendMessage(
 		chat.id,
 		`<b>${name}</b>\n${message}`,
