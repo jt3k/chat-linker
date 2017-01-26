@@ -43,7 +43,7 @@ npm test
 
 ### Setting up husky
 
-In project directory run this command
+If after the installation does not work git-hooks then run the following command in project directory.
 
 ```sh
 node ./node_modules/husky/bin/install.js
