@@ -5,12 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "xo",
+    "prod": "NODE_ENV=prod app.js",
+    "dev": "NODE_ENV=dev node --inspect app.js",
     "precommit": "npm test",
     "prepush":   "npm test",
-    "postreceive": "./crypter.js dec",
-
-    "prod": "NODE_ENV=prod app.js",
-    "dev": "NODE_ENV=dev node --inspect app.js"
+    "postreceive": "./crypter.js dec"
   },
   "keywords": [],
   "author": "",
