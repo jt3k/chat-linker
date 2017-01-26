@@ -1,10 +1,11 @@
 //
 //  jabber
 //
-const bus = require('../bus.js');
 const xmpp = require('node-xmpp');
-var jid = require('@xmpp/jid')
 
+const bus = require('../bus.js');
+
+const {JID} = xmpp;
 const config = require('../app-config').jabber;
 
 const chat = config[process.env.NODE_ENV];
@@ -39,9 +40,9 @@ client.on('stanza', stanza => {
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
       message = message.getText();
-      const from = new jid(stanza.attr('from'));
-      const room = from.full;
-      const name = from.resource;
+      const from = new JID(stanza.attr('from'));
+      const room = `${from.getLocal()}@${from.getDomain()}`;
+      const name = from.getResource();
       const network = 'JABBER';
 
       bus.emit('message', {network, room, name, message});

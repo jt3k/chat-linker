@@ -50,6 +50,14 @@ internal.prepareMessage = function (ctx) {
   return ctx.message.text;
 };
 
+// html-escaping only for telegram
+internal.htmlEscape = str => (
+  str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+);
+
 client.on('text', (ctx, next) => {
   const room = ctx.message.chat.title;
   if (room === chat.title) {
@@ -66,8 +74,8 @@ client.on('text', (ctx, next) => {
 client.startPolling();
 
 function send({name, message}) {
-  message = htmlEscape(message)
-  name = htmlEscape(name)
+  message = internal.htmlEscape(message);
+  name = internal.htmlEscape(name);
 
   client.telegram.sendMessage(
 		chat.id,
@@ -75,13 +83,5 @@ function send({name, message}) {
 		{parse_mode: 'HTML'}
 	);
 }
-
-const htmlEscape = str => (
-            str
-              .replace(/\&/g, '&amp;')
-              .replace(/\</g, '&lt;')
-              .replace(/\>/g, '&gt;')
-                          );
-
 
 module.exports = {client, send};
