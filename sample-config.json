@@ -27,5 +27,6 @@
       "username": "javascript_ru",
       "type": "supergroup"
     }
-  }
+  },
+  "use_prevent_sleep": true
 }
