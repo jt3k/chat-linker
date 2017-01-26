@@ -23,7 +23,7 @@ bus.on('message', ({network, room, name, message}) => {
 // pill for heroku
 
 const config = require('./app-config');
-const to_use_prevent_sleep = config['use_prevent_sleep'];
-if (to_use_prevent_sleep == true) {
+const usePreventSleep = config.use_prevent_sleep;
+if (usePreventSleep === true) {
   require('./prevent-sleep.js');
 }
