@@ -19,6 +19,3 @@ bus.on('message', ({network, room, name, message}) => {
     jabber.send({name, message});
   }
 });
-
-// pill for heroku
-require('./prevent-sleep.js');
