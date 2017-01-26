@@ -29,6 +29,8 @@ To start the bot:
 
 + Run `node app.js`.
 
+NOTE: if you don't want to use `prevent sleep` (workaround for heroku) set `use_prevent_sleep` setting to `false` in your configuration file.
+
 ## Contribution
 
 ### Setting up husky
