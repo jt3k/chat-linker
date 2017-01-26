@@ -23,7 +23,11 @@ To determine Telegram room parameters, follow the procedure:
    ```
 5. To make all room messages visible to the bot, make it a room admin
 
-Run `node app.js` to start the bot.
+To start the bot:
+
++ Set NODE_ENV environment variable to value that is in your application configuration. For example, in [sample-config.json]( https://github.com/Newlifer/chat-linker/blob/master/sample-config.json) there're two: `prod` for production sessings and `dev` for development.
+
++ Run `node app.js`.
 
 ## Contribution
 
