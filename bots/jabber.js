@@ -68,4 +68,23 @@ function send({name, message}) {
   );
 }
 
+if (chat.pingMs) {
+  const jid = config.connection.jid.toString();
+  const server = new xmpp.JID(jid).getDomain();
+
+  let pingCounter = 0;
+  const schedulePing = () => {
+    const iq = new xmpp.Element('iq', {
+      type: 'get',
+      to: server,
+      from: jid,
+      id: `ping${pingCounter++}`
+    }).c('ping', {xmlns: 'urn:xmpp:ping'});
+    client.send(iq);
+
+    setTimeout(schedulePing, chat.pingMs);
+  };
+  schedulePing();
+}
+
 module.exports = {client, send};
