@@ -28,7 +28,8 @@
     "rules": {
       "camelcase": ["error", {"properties": "never"}],
       "import/no-unresolved": [0],
-      "import/no-unassigned-import": [0]
+      "import/no-unassigned-import": [0],
+      "linebreak-style": 0
     },
     "space": true,
     "semicolon": true
