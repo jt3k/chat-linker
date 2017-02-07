@@ -51,4 +51,10 @@ If after the installation does not work git-hooks then run the following command
 node ./node_modules/husky/bin/install.js
 ```
 
+### Discussion
+
+- telegram: [javascript_ru](https://t.me/javascript_ru) (RU)
+- jabber: [javascript@conference.jabber.ru](xmpp://javascript@conference.jabber.ru) (RU)
+
+
 [bots-docs]: https://core.telegram.org/bots#3-how-do-i-create-a-bot
