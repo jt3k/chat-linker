@@ -2,7 +2,7 @@
 
 > linker for chats from different networks
 
-![illustration](https://cloud.githubusercontent.com/assets/1261240/22682361/5491e34c-ed23-11e6-83fe-ce50c18cdb13.png)
+![illustration](https://cdn.rawgit.com/jt3k/chat-linker/master/illustration-sketch.svg)
 
 ## Using
 
