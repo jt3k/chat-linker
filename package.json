@@ -4,6 +4,15 @@
   "main": "index.js",
   "description": "It makes a bridge between different IM-networks via chat-bot",
   "license": "MIT",
+  "repository": "jt3k/chat-linker",
+  "author": {
+    "name": "Andrey Gurtovoy",
+    "email": "iyntx@ya.ru",
+    "url": "github.com/jt3k"
+  },
+  "engines": {
+    "node": ">=4"
+  },
   "scripts": {
     "test": "xo",
     "prod": "NODE_ENV=prod app.js",
@@ -12,6 +21,14 @@
     "prepush":   "npm test",
     "postreceive": "./crypter.js dec"
   },
+  "keywords": [
+    "jabber",
+    "telegram",
+    "chats",
+    "groupchats",
+    "bridge"
+  ],
+
   "keywords": [],
   "author": "",
   "license": "MIT",
