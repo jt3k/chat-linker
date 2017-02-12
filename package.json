@@ -1,8 +1,8 @@
 {
   "name": "chat-linker",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
+  "description": "It makes a bridge between different IM-networks via chat-bot",
   "scripts": {
     "test": "xo",
     "prod": "NODE_ENV=prod app.js",
