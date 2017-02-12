@@ -1,4 +1,4 @@
-# chat-linker
+# chat-linker [![Build Status](https://travis-ci.org/jt3k/chat-linker.svg?branch=master)](https://travis-ci.org/jt3k/chat-linker)
 
 > linker for chats from different networks
 
