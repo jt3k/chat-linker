@@ -4,7 +4,20 @@
 
 ![illustration](https://cdn.rawgit.com/jt3k/chat-linker/master/illustration-sketch.svg)
 
-## Using
+## Usage
+
+### Clone or download files
+
+```sh
+$ git clone https://github.com/jt3k/chat-linker.git
+```
+
+or
+
+```sh
+$ curl https://codeload.github.com/jt3k/chat-linker/zip/master | tar -xf- -C /path/to/save
+```
+
 
 ### Setting
 Copy `sample-config.json` to `app-config.json` and tune it up.
@@ -39,7 +52,7 @@ To start the bot:
 To run tests use following command:
 
 ```sh
-npm test
+$ npm test
 
 ```
 
@@ -48,7 +61,7 @@ npm test
 If after the installation does not work git-hooks then run the following command in project directory.
 
 ```sh
-node ./node_modules/husky/bin/install.js
+$ node ./node_modules/husky/bin/install.js
 ```
 
 ### Discussion
@@ -58,3 +71,9 @@ node ./node_modules/husky/bin/install.js
 
 
 [bots-docs]: https://core.telegram.org/bots#3-how-do-i-create-a-bot
+
+
+## License
+
+MIT © [Andrey Gurtovoy](https://github.com/jt3k)
+
