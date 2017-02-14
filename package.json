@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "xo",
-    "prod": "NODE_ENV=prod app.js",
+    "prod": "NODE_ENV=prod node app.js",
     "dev": "NODE_ENV=dev node --inspect app.js",
     "precommit": "npm test",
     "prepush":   "npm test",
