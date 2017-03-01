@@ -1,13 +1,20 @@
 //
 //  telegram
 //
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
 
+const http = require('request');
 const Telegraf = require('telegraf');
+const uuid = require('uuid/v4');
 
 const config = require('../app-config').telegram;
+const httpd = require('../app-config').http;
 const bus = require('../bus.js');
 
 const chat = config[process.env.NODE_ENV];
+const files = httpd[process.env.NODE_ENV];
 
 const {BOT_TOKEN} = config;
 
@@ -16,16 +23,21 @@ const internal = {};
 
 internal.prepareMessage = function (ctx) {
   let nick = '';
-  let message = '';
+  let message = ctx.message.text;
+  let replyText = '';
 
   const replyToMessage = ctx.message.reply_to_message;
+
+  if (ctx.state.fileLink) {
+    message = ctx.state.fileLink;
+  }
 
   const isReplyWithText = replyToMessage && replyToMessage.text;
   if (isReplyWithText) {
     const isReplyFromOurBot = BOT_TOKEN.indexOf(replyToMessage.from.id) > -1;
 
     if (isReplyFromOurBot) {
-      [nick, message] = (function () {
+      [nick, replyText] = (function () {
         const lineEndPos = replyToMessage.text.indexOf('\n');
         const _nick = replyToMessage.text.slice(0, lineEndPos);
         const _message = replyToMessage.text
@@ -35,19 +47,19 @@ internal.prepareMessage = function (ctx) {
     } else {
       // if no bots reply
       nick = replyToMessage.from.username;
-      message = replyToMessage.text;
+      replyText = replyToMessage.text;
     }
 
     // adds quoting brackets
-    message = message.replace(/\n/g, '\n>> ');
+    replyText = replyText.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${ctx.message.text}`;
+    return `>> <${nick}> ${replyText}\n${message}`;
   }
 
   //
   // is no-reply //
   //
-  return ctx.message.text;
+  return message;
 };
 
 // html-escaping only for telegram
@@ -58,7 +70,21 @@ internal.htmlEscape = str => (
     .replace(/>/g, '&gt;')
 );
 
-client.on('text', (ctx, next) => {
+const downloadLinkMiddleware = (ctx, next) => {
+  if (ctx.updateSubType !== 'text') {
+    const updateSubType = ctx.message[ctx.updateSubType];
+    return client.telegram.getFileLink(updateSubType.file_id)
+      .then(link => {
+        const filename = uuid() + path.extname(url.parse(link).pathname);
+        http(link).pipe(fs.createWriteStream(path.join(files.directory, filename)));
+        ctx.state.fileLink = new url.URL(filename, files.baseUrl);
+        return next();
+      });
+  }
+  return next();
+};
+
+client.on('message', downloadLinkMiddleware, (ctx, next) => {
   const room = ctx.message.chat.title;
   if (room === chat.title) {
     const name = ctx.message.from.username;
