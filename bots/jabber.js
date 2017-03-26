@@ -21,7 +21,7 @@ client.on('error', function () {
 client.on('online', () => {
   console.log('online');
   client.send(new xmpp.Element('presence', {
-    to: chat.room + '/' + chat.nick
+    to: `${chat.room}/${chat.nick}`
   })
     .c('x', {
       xmlns: 'http://jabber.org/protocol/muc'
@@ -35,7 +35,7 @@ client.on('stanza', stanza => {
     let message = stanza.is('message') && stanza.getChildElements().find(item => item.is('body'));
 
     const isGroupchat = stanza.type === 'groupchat';
-    const isNotSelfMsg = stanza.attr('from') !== chat.room + '/' + chat.nick;
+    const isNotSelfMsg = stanza.attr('from') !== `${chat.room}/${chat.nick}`;
     const isNotDelay = !stanza.children.find(item => item.name === 'delay');
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
