@@ -14,6 +14,18 @@ const {BOT_TOKEN} = config;
 const client = new Telegraf(BOT_TOKEN);
 const internal = {};
 
+internal.prepareName = function (from) {
+  if (from.username) {
+    return from.username;
+  }
+
+  if (from.last_name) {
+    return `${from.first_name} ${from.last_name}`;
+  }
+
+  return from.first_name;
+};
+
 internal.prepareMessage = function (ctx) {
   let nick = '';
   let message = '';
@@ -34,7 +46,7 @@ internal.prepareMessage = function (ctx) {
       })();
     } else {
       // if no bots reply
-      nick = replyToMessage.from.username;
+      nick = internal.prepareName(replyToMessage.from);
       message = replyToMessage.text;
     }
 
@@ -61,7 +73,7 @@ internal.htmlEscape = str => (
 client.on('text', (ctx, next) => {
   const room = ctx.message.chat.title;
   if (room === chat.title) {
-    const name = ctx.message.from.username;
+    const name = internal.prepareName(ctx.message.from);
     const message = internal.prepareMessage(ctx);
 
     const network = 'TELEGRAM';
