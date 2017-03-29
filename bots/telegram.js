@@ -89,9 +89,13 @@ function send({name, message}) {
   message = internal.htmlEscape(message);
   name = internal.htmlEscape(name);
 
+  const textMessage = (config.messageTemplate || '<b>{name}</b>\n{message}')
+    .replace('{name}', name)
+    .replace('{message}', message);
+
   client.telegram.sendMessage(
 		chat.id,
-		`<b>${name}</b>\n${message}`,
+		textMessage,
 		{parse_mode: 'HTML'}
 	);
 }

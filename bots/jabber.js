@@ -55,6 +55,9 @@ client.on('stanza', stanza => {
 });
 
 function send({name, message}) {
+    .replace('{name}', name)
+    .replace('{message}', message);
+
   return client.send(
     new xmpp.Element(
       'message',
@@ -64,7 +67,7 @@ function send({name, message}) {
       }
     )
     .c('body')
-    .t(`<@${name}> ${message}`)
+    .t(textMessage)
   );
 }
 

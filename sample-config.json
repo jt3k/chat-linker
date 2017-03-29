@@ -14,7 +14,8 @@
       "room": "javascript@conference.jabber.ru",
       "nick": "tg",
       "pingMs": 60000
-    }
+    },
+    "messageTemplate": "<@{name}> {message}"
   },
   "telegram": {
     "BOT_TOKEN": "SECRET",
@@ -28,6 +29,7 @@
       "title": "javascript",
       "username": "javascript_ru",
       "type": "supergroup"
-    }
+    },
+    "messageTemplate": "<b>{name}</b>\n{message}"
   }
 }
