@@ -55,6 +55,7 @@ client.on('stanza', stanza => {
 });
 
 function send({name, message}) {
+  const textMessage = (config.messageTemplate || '<@{name}> {message}')
     .replace('{name}', name)
     .replace('{message}', message);
 
