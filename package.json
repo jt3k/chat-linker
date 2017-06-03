@@ -15,10 +15,10 @@
   },
   "scripts": {
     "test": "xo",
-    "prod": "NODE_ENV=prod node app.js",
-    "dev": "NODE_ENV=dev node --inspect app.js",
+    "prod": "cross-env NODE_ENV=prod node app.js",
+    "dev": "cross-env NODE_ENV=dev node --inspect app.js",
     "precommit": "npm test",
-    "prepush":   "npm test",
+    "prepush": "npm test",
     "postreceive": "./crypter.js dec"
   },
   "keywords": [
@@ -28,11 +28,8 @@
     "groupchats",
     "bridge"
   ],
-
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "dependencies": {
+    "cross-env": "^5.0.0",
     "node-xmpp": "^1.0.4",
     "telegraf": "^3.3.1"
   },
