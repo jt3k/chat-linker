@@ -59,6 +59,16 @@ internal.prepareMessage = function (ctx) {
   //
   // is no-reply //
   //
+
+  if (ctx.message.forward_from) {
+    nick = internal.prepareName(ctx.message.forward_from);
+
+    // adds quoting brackets
+    message = ctx.message.text.replace(/\n/g, '\n>> ');
+
+    return `>> <${nick}> ${message}`;
+  }
+
   return ctx.message.text;
 };
 
