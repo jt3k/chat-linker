@@ -26,50 +26,67 @@ internal.prepareName = function (from) {
   return from.first_name;
 };
 
-internal.prepareMessage = function (ctx) {
+internal.isMessageFromBot = function (message) {
+  const replyToMessage = message.reply_to_message;
+
+  const isReplyWithText = replyToMessage && replyToMessage.text;
+  if (!isReplyWithText) {
+    return false;
+  }
+
+  const isReplyFromOurBot = BOT_TOKEN.indexOf(replyToMessage.from.id) > -1;
+
+  return isReplyFromOurBot;
+};
+
+internal.getMessageDetails = function (replyToMessage) {
+  const text = replyToMessage.text;
+  const lineEndPos = text.indexOf('\n');
+  const _nick = text.slice(0, lineEndPos);
+  const _message = text.slice(lineEndPos + 1);
+  return [_nick, _message];
+};
+
+internal.getNoBotsReplyMessageDetails = function (replyToMessage) {
+  const nick = internal.prepareName(replyToMessage.from);
+  const message = replyToMessage.text;
+
+  return [nick, message];
+};
+
+internal.prepareMessage = function (msg, emoji) {
   let nick = '';
   let message = '';
 
-  const replyToMessage = ctx.message.reply_to_message;
+  const replyToMessage = msg.reply_to_message;
+  const isReplyFromOurBot = internal.isMessageFromBot(msg);
 
   const isReplyWithText = replyToMessage && replyToMessage.text;
   if (isReplyWithText) {
-    const isReplyFromOurBot = BOT_TOKEN.indexOf(replyToMessage.from.id) > -1;
-
-    if (isReplyFromOurBot) {
-      [nick, message] = (function () {
-        const lineEndPos = replyToMessage.text.indexOf('\n');
-        const _nick = replyToMessage.text.slice(0, lineEndPos);
-        const _message = replyToMessage.text
-                          .slice(lineEndPos + 1);
-        return [_nick, _message];
-      })();
-    } else {
-      // if no bots reply
-      nick = internal.prepareName(replyToMessage.from);
-      message = replyToMessage.text;
-    }
+    [nick, message] = isReplyFromOurBot ?
+    internal.getMessageDetails(replyToMessage) :
+    internal.getNoBotsReplyMessageDetails(replyToMessage);
 
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${ctx.message.text}`;
+    return `>> <${nick}> ${message}\n${message.text}`;
   }
 
   //
   // is no-reply //
   //
 
-  if (ctx.message.forward_from) {
-    nick = internal.prepareName(ctx.message.forward_from);
+  if (msg.forward_from) {
+    nick = internal.prepareName(msg.forward_from);
 
     // adds quoting brackets
-    message = ctx.message.text.replace(/\n/g, '\n>> ');
+    message = msg.text.replace(/\n/g, '\n>> ');
 
     return `>> <${nick}> ${message}`;
   }
 
-  return ctx.message.text;
+  return emoji || msg.text;
 };
 
 // html-escaping only for telegram
@@ -84,7 +101,7 @@ client.on('text', (ctx, next) => {
   const room = ctx.message.chat.title;
   if (room === chat.title) {
     const name = internal.prepareName(ctx.message.from);
-    const message = internal.prepareMessage(ctx);
+    const message = internal.prepareMessage(ctx.message);
 
     const network = 'TELEGRAM';
 
@@ -93,6 +110,25 @@ client.on('text', (ctx, next) => {
     next();
   }
 });
+
+client.on('sticker', (ctx, next) => {
+  const room = ctx.message.chat.title;
+  if (room === chat.title) {
+    //
+    const sticker = ctx.message.sticker;
+    const emoji = sticker.emoji;
+
+    const name = internal.prepareName(ctx.message.from);
+    const message = internal.prepareMessage(ctx.message, emoji);
+
+    const network = 'TELEGRAM';
+
+    bus.emit('message', {network, room, name, message});
+
+    next();
+  }
+});
+
 client.startPolling();
 
 function send({name, message}) {
