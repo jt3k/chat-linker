@@ -1,11 +1,11 @@
 //
 //  telegram
 //
-
+const botNetwork = Symbol.for('TELEGRAM');
 const Telegraf = require('telegraf');
 
 const config = require('../app-config').telegram;
-const bus = require('../bus.js');
+const bus = require('../bus');
 
 const chat = config[process.env.NODE_ENV];
 
@@ -103,7 +103,7 @@ client.on('text', (ctx, next) => {
     const name = internal.prepareName(ctx.message.from);
     const message = internal.prepareMessage(ctx.message);
 
-    const network = 'TELEGRAM';
+    const network = botNetwork;
 
     bus.emit('message', {network, room, name, message});
 
@@ -121,7 +121,7 @@ client.on('sticker', (ctx, next) => {
     const name = internal.prepareName(ctx.message.from);
     const message = internal.prepareMessage(ctx.message, emoji);
 
-    const network = 'TELEGRAM';
+    const network = botNetwork;
 
     bus.emit('message', {network, room, name, message});
 
@@ -146,4 +146,4 @@ function send({name, message}) {
 	);
 }
 
-module.exports = {client, send};
+module.exports = {client, send, network: botNetwork};

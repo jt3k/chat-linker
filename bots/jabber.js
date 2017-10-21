@@ -1,9 +1,12 @@
 //
 //  jabber
 //
+
+const botNetwork = Symbol.for('XMPP');
+
 const xmpp = require('node-xmpp');
 
-const bus = require('../bus.js');
+const bus = require('../bus');
 
 const {JID} = xmpp;
 const config = require('../app-config').jabber;
@@ -43,7 +46,7 @@ client.on('stanza', stanza => {
       const from = new JID(stanza.attr('from'));
       const room = `${from.getLocal()}@${from.getDomain()}`;
       const name = from.getResource();
-      const network = 'JABBER';
+      const network = botNetwork;
 
       bus.emit('message', {network, room, name, message});
     }
@@ -91,4 +94,4 @@ if (chat.pingMs) {
   schedulePing();
 }
 
-module.exports = {client, send};
+module.exports = {client, send, network: botNetwork};

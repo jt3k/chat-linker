@@ -2,24 +2,18 @@
 //  core
 //
 
-const bus = require('./bus.js');
-
-const __DEV__ = process.env.NODE_ENV === 'dev';
+const bus = require('./bus');
+const bots = require('./bots');
 
 // global for debugging
-const jabber = global.jabber = require('./bots/jabber');
-const telegram = global.telegram = require('./bots/telegram');
+Object.keys(bots).forEach(k => {
+  global[k] = bots[k];
+});
 
 bus.on('message', ({network, room, name, message}) => {
-  if (__DEV__) {
-    console.log(`${network} "${room}": <${name}> ${message}`);
-  }
-
-  if (network === 'JABBER') {
-    telegram.send({name, message});
-  }
-
-  if (network === 'TELEGRAM') {
-    jabber.send({name, message});
-  }
+  Object.values(bots).forEach(bot => {
+    if (network === bot.network) {
+      bot.send({name, message, room});
+    }
+  });
 });
