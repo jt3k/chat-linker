@@ -1,26 +1,24 @@
-//
-//  jabber
-//
-
-const botNetwork = Symbol.for('XMPP');
-
 const xmpp = require('node-xmpp');
-
-const bus = require('../bus');
+const bus = require('../../bus');
 
 const {JID} = xmpp;
-const config = require('../app-config').jabber;
+const config = require('../../app-config').jabber;
+const botNetwork = require('./network');
 
 const chat = config[process.env.NODE_ENV];
 
-const client = new xmpp.Client(config.connection);
-// держим соединение
-client.connection.socket.setTimeout(0);
-client.connection.socket.setKeepAlive(true, 10000);
+const connection = config.connection;
+
+const client = new xmpp.Client(connection);
+// Keep alive
+const socket = client.connection.socket;
+socket.setTimeout(0);
+socket.setKeepAlive(true, 10000);
 
 client.on('error', function () {
   console.log('arguments', arguments);
 });
+
 client.on('online', () => {
   console.log('online');
   client.send(new xmpp.Element('presence', {
@@ -57,24 +55,6 @@ client.on('stanza', stanza => {
   }
 });
 
-function send({name, message}) {
-  const textMessage = (config.messageTemplate || '<@{name}> {message}')
-    .replace('{name}', name)
-    .replace('{message}', message);
-
-  return client.send(
-    new xmpp.Element(
-      'message',
-      {
-        to: chat.room,
-        type: 'groupchat'
-      }
-    )
-    .c('body')
-    .t(textMessage)
-  );
-}
-
 if (chat.pingMs) {
   const jid = config.connection.jid.toString();
   const server = new xmpp.JID(jid).getDomain();
@@ -94,4 +74,17 @@ if (chat.pingMs) {
   schedulePing();
 }
 
-module.exports = {client, send, network: botNetwork};
+client.sendMessage = function (textMessage) {
+  return client.send(
+    new xmpp.Element(
+      'message',
+      {
+        to: chat.room,
+        type: 'groupchat'
+      }
+    )
+    .c('body')
+    .t(textMessage));
+};
+
+module.exports = client;

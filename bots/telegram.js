@@ -70,7 +70,7 @@ internal.prepareMessage = function (msg, emoji) {
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${message.text}`;
+    return `>> <${nick}> ${message}\n${msg.text}`;
   }
 
   //
