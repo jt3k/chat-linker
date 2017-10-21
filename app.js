@@ -5,7 +5,7 @@
 const bus = require('./bus');
 const bots = require('./bots');
 
-const botsList = Object.keys(bots).map(botName => bots[botName]);
+const botsList = Object.values(bots);
 
 // global for debugging
 Object.keys(bots).forEach(k => {
