@@ -35,10 +35,17 @@ class Message {
 }
 
 class ReplyToMessage extends Message {
+  static test(msg) {
+    const replyToMessage = msg.reply_to_message;
+    const isReplyWithText = replyToMessage && replyToMessage.text;
+    return isReplyWithText;
+  }
+
   getDetails() {
     const msg = this.msg;
     const nick = Name.from(msg.from);
-    const message = msg.text;
+    const replyToMessage = msg.reply_to_message;
+    const message = replyToMessage.text;
 
     return [nick, message];
   }
@@ -55,6 +62,10 @@ class ReplyToMessage extends Message {
 }
 
 class ForwardedMessage extends Message {
+  static test(msg) {
+    return msg.forward_from;
+  }
+
   toString() {
     const msg = this.msg;
     const nick = Name.from(msg.forward_from);
@@ -67,7 +78,7 @@ class ForwardedMessage extends Message {
 }
 
 class BotMessage extends ReplyToMessage {
-  static isFromBot(msg) {
+  static test(msg) {
     const replyToMessage = msg.reply_to_message;
 
     const isReplyWithText = replyToMessage && replyToMessage.text;
@@ -82,7 +93,8 @@ class BotMessage extends ReplyToMessage {
 
   getDetails() {
     const msg = this.msg;
-    const text = msg.text;
+    const replyToMessage = msg.reply_to_message;
+    const text = replyToMessage.text;
     const lineEndPos = text.indexOf('\n');
     const _nick = text.slice(0, lineEndPos);
     const _message = text.slice(lineEndPos + 1);
@@ -91,23 +103,19 @@ class BotMessage extends ReplyToMessage {
 }
 
 function messageFactory(msg) {
-  const forwardMessage = msg.forward_from;
-  if (forwardMessage) {
+  if (ForwardedMessage.test(msg)) {
     return new ForwardedMessage(msg);
   }
 
-  const replyToMessage = msg.reply_to_message;
-  const isReplyWithText = replyToMessage && replyToMessage.text;
-  if (!isReplyWithText) {
+  if (!ReplyToMessage.test(msg)) {
     return new Message(msg);
   }
 
-  const isReplyFromOurBot = BotMessage.isFromBot(msg);
-  if (isReplyFromOurBot) {
-    return new BotMessage(replyToMessage);
+  if (BotMessage.test(msg)) {
+    return new BotMessage(msg);
   }
 
-  return new ReplyToMessage(replyToMessage);
+  return new ReplyToMessage(msg);
 }
 
 function prepareMessage(msg) {
@@ -117,30 +125,33 @@ function prepareMessage(msg) {
   return stringMessage;
 }
 
+function prepareEmittingMessageDetails(message) {
+  const room = message.chat.title;
+  if (room !== chat.title) {
+    return null;
+  }
+
+  const name = Name.from(message.from);
+  const msg = prepareMessage(message);
+
+  return {network: botNetwork, room, name, message: msg};
+}
+
 client.on('text', (ctx, next) => {
-  const room = ctx.message.chat.title;
-  if (room === chat.title) {
-    const name = Name.from(ctx.message.from);
-    const message = prepareMessage(ctx.message);
-
-    bus.emit('message', {network: botNetwork, room, name, message});
-
+  const msg = prepareEmittingMessageDetails(ctx.message);
+  if (msg) {
+    bus.emit('message', msg);
     next();
   }
 });
 
 client.on('sticker', (ctx, next) => {
-  const room = ctx.message.chat.title;
-  if (room === chat.title) {
-    //
+  const msg = prepareEmittingMessageDetails(ctx.message);
+  if (msg) {
     const sticker = ctx.message.sticker;
     const emoji = sticker.emoji;
-
-    const name = Name.from(ctx.message.from);
-    const message = emoji || prepareMessage(ctx.message);
-
-    bus.emit('message', {network: botNetwork, room, name, message});
-
+    msg.message = emoji || msg.message;
+    bus.emit('message', msg);
     next();
   }
 });
