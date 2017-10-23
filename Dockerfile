@@ -1,4 +1,4 @@
-FROM node:6.9.5
+FROM node:8.7.0
 MAINTAINER friedrich@fornever.me
 RUN git clone https://github.com/jt3k/chat-linker.git /usr/app/src && cd /usr/app/src && git checkout 8f54762de724ba9caa963b5ba908f0b29e230681
 RUN cd /usr/app/src && npm install # TODO: Not stable enough; migrate to yarn
