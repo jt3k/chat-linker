@@ -16,7 +16,7 @@
   "scripts": {
     "test": "xo",
     "prod": "cross-env NODE_ENV=prod node app.js",
-    "dev": "cross-env NODE_ENV=dev node --debug-brk --inspect app.js",
+    "dev": "cross-env NODE_ENV=dev node --inspect app.js",
     "precommit": "npm test",
     "prepush": "npm test",
     "postreceive": "./crypter.js dec"
