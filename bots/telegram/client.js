@@ -43,8 +43,8 @@ class ReplyToMessage extends Message {
 
   getDetails() {
     const msg = this.msg;
-    const nick = Name.from(msg.from);
     const replyToMessage = msg.reply_to_message;
+    const nick = Name.from(replyToMessage.from);
     const message = replyToMessage.text;
 
     return [nick, message];
