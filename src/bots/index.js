@@ -1,4 +1,4 @@
-const jabber = require('./jabber');
-const telegram = require('./telegram');
+// @flow
 
-module.exports = {jabber, telegram};
+export { default as jabber } from './jabber';
+export { default as telegram } from './telegram';
