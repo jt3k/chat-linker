@@ -1,7 +1,7 @@
 {
   "name": "chat-linker",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/app.js",
   "description": "It makes a bridge between different IM-networks via chat-bot",
   "license": "MIT",
   "repository": "jt3k/chat-linker",
@@ -15,10 +15,11 @@
   },
   "scripts": {
     "test": "xo",
-    "prod": "cross-env NODE_ENV=prod node app.js",
-    "dev": "cross-env NODE_ENV=dev node --inspect app.js",
-    "precommit": "npm test",
-    "prepush": "npm test",
+    "build": "babel src/ -d dist/",
+    "prod": "cross-env NODE_ENV=prod node dist/app.js",
+    "dev": "node --inspect dist/app.js",
+    "precommit": "npm test && npm run build",
+    "prepush": "npm run precommit",
     "postreceive": "./crypter.js dec"
   },
   "keywords": [
@@ -34,16 +35,31 @@
     "telegraf": "^3.3.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-flow": "^6.23.0",
+    "flow-bin": "^0.57.3",
     "husky": "^0.11.9",
     "xo": "^0.17.1"
   },
   "xo": {
     "esnext": true,
-    "envs": ["node"],
+    "envs": [
+      "node"
+    ],
     "rules": {
-      "camelcase": ["error", {"properties": "never"}],
-      "import/no-unresolved": [0],
-      "import/no-unassigned-import": [0],
+      "camelcase": [
+        "error",
+        {
+          "properties": "never"
+        }
+      ],
+      "import/no-unresolved": [
+        0
+      ],
+      "import/no-unassigned-import": [
+        0
+      ],
       "linebreak-style": 0
     },
     "space": true,
