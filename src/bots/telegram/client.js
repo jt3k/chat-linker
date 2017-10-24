@@ -2,6 +2,11 @@
 
 import type { Config } from './Config';
 
+import type {
+  Telegram$User,
+  Telegram$Message
+} from './telegram.h';
+
 import Telegraf from 'telegraf';
 
 import appConfig from '../../../app-config';
@@ -16,17 +21,8 @@ const { BOT_TOKEN } = config;
 
 const client: Telegraf = new Telegraf(BOT_TOKEN);
 
-type User = {
-  id: number,
-  is_bot: boolean,
-  first_name: string,
-  last_name?: string,
-  username?: string,
-  language_code?: string
-}
-
 class Name {
-  static from(user: User) {
+  static from(user: Telegram$User): string {
     if (user.username) {
       return user.username;
     }
@@ -40,86 +36,99 @@ class Name {
 }
 
 class Message {
-  msg: Object;
+  msg: Telegram$Message;
 
-  constructor(msg: Object) {
+  constructor(msg: Telegram$Message) {
     this.msg = msg;
   }
 
-  toString() {
+  toString(): string {
     return this.msg.text || '';
   }
 }
 
 class ReplyToMessage extends Message {
-  static test(msg) {
+  static test(msg: Telegram$Message): boolean {
     const replyToMessage = msg.reply_to_message;
     const isReplyWithText = replyToMessage && replyToMessage.text;
-    return isReplyWithText;
+
+    return !!isReplyWithText;
   }
 
-  getDetails() {
+  getDetails(): [string, string] {
     const msg = this.msg;
     const replyToMessage = msg.reply_to_message;
-    const nick = Name.from(replyToMessage.from);
-    const message = replyToMessage.text;
 
-    return [nick, message];
+    if (!replyToMessage) return ['', ''];
+
+    const nick = Name.from(replyToMessage.from);
+    const message = replyToMessage && replyToMessage.text;
+
+    return [nick, message || ''];
   }
 
-  toString() {
+  toString(): string {
     const msg = this.msg;
     let [nick, message] = this.getDetails();
 
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${msg.text}`;
+    return `>> <${nick}> ${message}\n${msg.text || ''}`;
   }
 }
 
 class ForwardedMessage extends Message {
-  static test(msg) {
-    return msg.forward_from;
+  static test(msg: Telegram$Message): boolean {
+    return !!msg.forward_from;
   }
 
-  toString() {
+  toString(): string {
     const msg = this.msg;
+
+    if (!msg.forward_from) return '';
+
     const nick = Name.from(msg.forward_from);
 
     // adds quoting brackets
-    const message = msg.text.replace(/\n/g, '\n>> ');
+    const message = msg.text ? msg.text.replace(/\n/g, '\n>> ') : '';
 
     return `>> <${nick}> ${message}`;
   }
 }
 
 class BotMessage extends ReplyToMessage {
-  static test(msg) {
+  static test(msg: Telegram$Message): boolean {
     const replyToMessage = msg.reply_to_message;
 
-    const isReplyWithText = replyToMessage && replyToMessage.text;
+    if (!replyToMessage) return false;
+
+    const isReplyWithText: boolean = !!replyToMessage.text;
+
     if (!isReplyWithText) {
       return false;
     }
 
-    const isReplyFromOurBot = BOT_TOKEN.indexOf(replyToMessage.from.id) > -1;
+    const isReplyFromOurBot = BOT_TOKEN.indexOf(
+      replyToMessage.from.id.toString()
+    ) > -1;
 
     return isReplyFromOurBot;
   }
 
-  getDetails() {
+  getDetails(): [string, string] {
     const msg = this.msg;
     const replyToMessage = msg.reply_to_message;
-    const text = replyToMessage.text;
+    const text = replyToMessage ? (replyToMessage.text || '') : '';
     const lineEndPos = text.indexOf('\n');
     const _nick = text.slice(0, lineEndPos);
     const _message = text.slice(lineEndPos + 1);
+
     return [_nick, _message];
   }
 }
 
-function messageFactory(msg) {
+function messageFactory(msg: Telegram$Message) {
   if (ForwardedMessage.test(msg)) {
     return new ForwardedMessage(msg);
   }
@@ -142,8 +151,9 @@ function prepareMessage(msg) {
   return stringMessage;
 }
 
-function prepareEmittingMessageDetails(message) {
+function prepareEmittingMessageDetails(message: Telegram$Message) {
   const room = message.chat.title;
+
   if (room !== chat.title) {
     return null;
   }
@@ -154,7 +164,7 @@ function prepareEmittingMessageDetails(message) {
   return {network: botNetwork, room, name, message: msg};
 }
 
-client.on('text', (ctx, next) => {
+client.on('text', (ctx: Object, next: Function) => {
   const msg = prepareEmittingMessageDetails(ctx.message);
   if (msg) {
     bus.emit('message', msg);
@@ -162,7 +172,7 @@ client.on('text', (ctx, next) => {
   }
 });
 
-client.on('sticker', (ctx, next) => {
+client.on('sticker', (ctx: Object, next: Function) => {
   const msg = prepareEmittingMessageDetails(ctx.message);
   if (msg) {
     const sticker = ctx.message.sticker;
