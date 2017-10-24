@@ -5,5 +5,5 @@ export interface Bot {
   config: Object;
   network: Symbol;
 
-  send({ name: string, message: string }): any;
+  send({ name: string, message: string, room?: string }): Bot;
 }

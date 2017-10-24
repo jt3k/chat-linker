@@ -1,24 +1,35 @@
-const botNetwork = require('./network');
+// @flow
 
-class JabberBot {
-  constructor(client, config) {
+import type { Bot } from '../../Bot';
+import type { Config } from './Config';
+import type { XmppClient } from './types';
+
+import botNetwork from './network';
+
+class JabberBot implements Bot {
+  client: XmppClient;
+  config: Config;
+  network: Symbol;
+
+  constructor(client: XmppClient, config: Config) {
     this.client = client;
     this.config = config;
     this.network = botNetwork;
   }
 
-  send({name, message}) {
-    const client = this.client;
-    const config = this.config;
+  send({ name, message }: { name: string, message: string }): this {
+    const { client, config } = this;
 
     const textMessage = (config.messageTemplate || '<@{name}> {message}')
       .replace('{name}', name)
       .replace('{message}', message);
 
-    return client.sendMessage(
+    client.sendMessage(
       textMessage
     );
+
+    return this;
   }
 }
 
-module.exports = JabberBot;
+export default JabberBot;

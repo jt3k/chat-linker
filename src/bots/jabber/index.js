@@ -1,8 +1,14 @@
-const config = require('../../app-config').jabber;
+// @flow
 
-const JabberBot = require('./bot');
-const client = require('./client');
+import type { Config } from './Config';
 
-const bot = new JabberBot(client, config);
+import JabberBot from './bot';
+import client from './client';
 
-module.exports = bot;
+import config from '../../../app-config';
+
+const jabberConfig: Config = config.jabber;
+
+const bot = new JabberBot(client, jabberConfig);
+
+export default bot;

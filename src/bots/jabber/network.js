@@ -1,2 +1,2 @@
-const xmpp = Symbol.for('XMPP');
-module.exports = xmpp;
+// @flow
+export default Symbol.for('XMPP');
