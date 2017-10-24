@@ -1,2 +1,2 @@
-const telegram = Symbol.for('TELEGRAM');
-module.exports = telegram;
+// @flow
+export default Symbol.for('TELEGRAM');

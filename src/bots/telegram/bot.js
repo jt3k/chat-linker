@@ -1,23 +1,30 @@
-const botNetwork = require('./network');
+// @flow
+
+import type { Bot } from '../../Bot';
+import type { Config } from './Config';
+
+import botNetwork from './network';
 
 // html-escaping only for telegram
-const htmlEscape = str => (
-  str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-);
+const htmlEscape = str => str
+  .replace(/&/g, '&amp;')
+  .replace(/</g, '&lt;')
+  .replace(/>/g, '&gt;');
 
-class TelegramBot {
-  constructor(client, config) {
+class TelegramBot implements Bot {
+  client: Object;
+  config: Config;
+  network: Symbol;
+
+  constructor(client: Object, config: Config) {
     this.client = client;
     this.config = config;
     this.network = botNetwork;
   }
 
-  send({name, message}) {
-    const config = this.config;
-    const chat = config[process.env.NODE_ENV];
+  send({ name, message }: { name: string, message: string }): this {
+    const { config } = this;
+    const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
     message = htmlEscape(message);
     name = htmlEscape(name);
@@ -29,9 +36,11 @@ class TelegramBot {
     this.client.telegram.sendMessage(
       chat.id,
       textMessage,
-      {parse_mode: 'HTML'}
+      { parse_mode: 'HTML' }
     );
+
+    return this;
   }
 }
 
-module.exports = TelegramBot;
+export default TelegramBot;

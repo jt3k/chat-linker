@@ -11,7 +11,7 @@ export type onMessage = {
   room: string,
   name: string,
   message: string
-}
+};
 
 const __DEV__ = process.env.NODE_ENV === 'dev';
 

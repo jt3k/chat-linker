@@ -1,14 +1,20 @@
-const Telegraf = require('telegraf');
+// @flow
 
-const config = require('../../app-config').telegram;
-const bus = require('../../bus');
-const botNetwork = require('./network');
+import type { Config } from './Config';
 
-const chat = config[process.env.NODE_ENV];
+import Telegraf from 'telegraf';
 
-const {BOT_TOKEN} = config;
+import appConfig from '../../../app-config';
+import bus from '../../bus';
+import botNetwork from './network';
 
-const client = new Telegraf(BOT_TOKEN);
+const config: Config = appConfig.telegram;
+
+const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
+
+const { BOT_TOKEN } = config;
+
+const client: Telegraf = new Telegraf(BOT_TOKEN);
 
 class Name {
   static from(msg) {
@@ -158,4 +164,4 @@ client.on('sticker', (ctx, next) => {
 
 client.startPolling();
 
-module.exports = client;
+export default client;

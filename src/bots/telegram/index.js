@@ -1,8 +1,15 @@
-const config = require('../../app-config').telegram;
+// @flow
 
-const TelegramBot = require('./bot');
-const client = require('./client');
+import type { Config } from './Config';
+import type { Bot } from '../../Bot';
 
-const bot = new TelegramBot(client, config);
+import TelegramBot from './bot';
+import client from './client';
 
-module.exports = bot;
+import config from '../../../app-config';
+
+const telegramConfig: Config = config.telegram;
+
+const bot: Bot = new TelegramBot(client, telegramConfig);
+
+export default bot;
