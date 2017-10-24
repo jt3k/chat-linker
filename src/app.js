@@ -1,21 +1,28 @@
+// @flow
+
 //
 //  core
 //
 
-const bus = require('./bus');
-const bots = require('./bots');
+import type { Bot } from './Bot';
+import type { onMessage } from './bus';
 
-const botsList = Object.values(bots);
+import bus from './bus';
+import * as bots from './bots';
 
-// global for debugging
+const botsList: Bot[] = [];
+
 Object.keys(bots).forEach(k => {
+  botsList.push(bots[k]);
+
+  // global for debugging
   global[k] = bots[k];
 });
 
-bus.on('message', ({network, room, name, message}) => {
+bus.on('message', ({ network, room, name, message }: onMessage) => {
   const botsToPropagateMsg = botsList.filter(bot => bot.network !== network);
 
   botsToPropagateMsg.forEach(bot => {
-    bot.send({name, message, room});
+    bot.send({ name, message, room });
   });
 });

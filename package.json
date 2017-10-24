@@ -15,9 +15,10 @@
   },
   "scripts": {
     "test": "xo",
+    "flow": "flow .",
     "build": "babel src/ -d dist/",
     "prod": "cross-env NODE_ENV=prod node dist/app.js",
-    "dev": "node --inspect dist/app.js",
+    "dev": "cross-env NODE_ENV=dev node --inspect dist/app.js",
     "precommit": "npm test && npm run build",
     "prepush": "npm run precommit",
     "postreceive": "./crypter.js dec"
