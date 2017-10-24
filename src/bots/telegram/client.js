@@ -16,27 +16,38 @@ const { BOT_TOKEN } = config;
 
 const client: Telegraf = new Telegraf(BOT_TOKEN);
 
+type User = {
+  id: number,
+  is_bot: boolean,
+  first_name: string,
+  last_name?: string,
+  username?: string,
+  language_code?: string
+}
+
 class Name {
-  static from(msg) {
-    if (msg.username) {
-      return msg.username;
+  static from(user: User) {
+    if (user.username) {
+      return user.username;
     }
 
-    if (msg.last_name) {
-      return `${msg.first_name} ${msg.last_name}`;
+    if (user.last_name) {
+      return `${user.first_name} ${user.last_name}`;
     }
 
-    return msg.first_name;
+    return user.first_name;
   }
 }
 
 class Message {
-  constructor(msg) {
+  msg: Object;
+
+  constructor(msg: Object) {
     this.msg = msg;
   }
 
   toString() {
-    return this.msg.text;
+    return this.msg.text || '';
   }
 }
 
