@@ -4,7 +4,7 @@
 //  core
 //
 
-import type { Bot } from './bot';
+import type { Bot } from './Bot';
 import type { onMessage } from './bus';
 
 // eslint-disable-next-line no-duplicate-imports
