@@ -10,7 +10,7 @@ import type {
   Telegram$Message
 } from './telegram.h';
 
-import type {Config} from './config';
+import type { Config } from './config';
 import botNetwork from './network';
 
 type Context = {
@@ -36,7 +36,7 @@ const config: Config = appConfig.telegram;
 
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
-const {BOT_TOKEN} = config;
+const { BOT_TOKEN } = config;
 
 const client = new Telegraf(BOT_TOKEN);
 
@@ -186,7 +186,7 @@ function prepareEmittingMessageDetails(message: Telegram$Message) {
   const name = Name.from(message.from);
   const msg = prepareMessage(message);
 
-  return {network: botNetwork, room, name, message: msg};
+  return { network: botNetwork, room, name, message: msg };
 }
 
 client

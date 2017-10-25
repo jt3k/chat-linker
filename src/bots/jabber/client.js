@@ -3,22 +3,22 @@
 import xmpp from 'node-xmpp';
 import appConfig from '../../../app-config';
 import bus from '../../bus';
-import type {Config} from './Config';
-import type {XmppClient} from './types';
+import type { Config } from './Config';
+import type { XmppClient } from './types';
 
 import botNetwork from './network';
 
 const config: Config = appConfig.jabber;
 
-const {JID} = xmpp;
+const { JID } = xmpp;
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
-const {connection} = config;
+const { connection } = config;
 
 const client: XmppClient = new xmpp.Client(connection);
 
 // Keep alive
-const {socket} = client.connection;
+const { socket } = client.connection;
 socket.setTimeout(0);
 socket.setKeepAlive(true, 10000);
 
@@ -55,7 +55,7 @@ client.on('stanza', stanza => {
       const name = from.getResource();
       const network = botNetwork;
 
-      bus.emit('message', {network, room, name, message});
+      bus.emit('message', { network, room, name, message });
     }
   } catch (err) {
     global.sss.push(stanza);
@@ -75,7 +75,7 @@ if (chat.pingMs) {
       to: server,
       from: jid,
       id: `ping${pingCounter++}`
-    }).c('ping', {xmlns: 'urn:xmpp:ping'});
+    }).c('ping', { xmlns: 'urn:xmpp:ping' });
     client.send(iq);
 
     setTimeout(schedulePing, chat.pingMs);

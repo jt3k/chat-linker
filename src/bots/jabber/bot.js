@@ -1,8 +1,8 @@
 // @flow
 
-import type {Bot} from '../../Bot';
-import type {Config} from './Config';
-import type {XmppClient} from './types';
+import type { Bot } from '../../Bot';
+import type { Config } from './Config';
+import type { XmppClient } from './types';
 
 import botNetwork from './network';
 
@@ -17,8 +17,8 @@ class JabberBot implements Bot {
     this.network = botNetwork;
   }
 
-  send({name, message}: { name: string, message: string }): this {
-    const {client, config} = this;
+  send({ name, message }: { name: string, message: string }): this {
+    const { client, config } = this;
 
     const textMessage = (config.messageTemplate || '<@{name}> {message}')
       .replace('{name}', name)

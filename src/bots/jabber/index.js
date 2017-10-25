@@ -1,8 +1,8 @@
 // @flow
 
 import config from '../../../app-config';
-import type {Bot} from '../../Bot';
-import type {Config} from './config';
+import type { Bot } from '../../Bot';
+import type { Config } from './config';
 
 import JabberBot from './bot';
 import client from './client';

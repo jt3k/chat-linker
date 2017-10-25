@@ -19,7 +19,7 @@ class Emitter extends EventEmitter {}
 
 const bus = new Emitter();
 
-bus.on('message', ({network, room, name, message}: onMessage) => {
+bus.on('message', ({ network, room, name, message }: onMessage) => {
   if (!__DEV__) {
     return;
   }
