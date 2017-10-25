@@ -1,6 +1,7 @@
 // @flow
 
 import Telegraf from 'telegraf';
+// $FlowFixMe
 import appConfig from '../../../app-config';
 import bus from '../../bus';
 import botNetwork from './network';

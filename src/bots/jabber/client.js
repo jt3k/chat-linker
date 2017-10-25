@@ -1,6 +1,7 @@
 // @flow
 
 import xmpp from 'node-xmpp';
+// $FlowFixMe
 import appConfig from '../../../app-config';
 import bus from '../../bus';
 import botNetwork from './network';
