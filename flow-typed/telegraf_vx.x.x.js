@@ -14,6 +14,43 @@
  */
 
 declare module 'telegraf' {
+  declare type updateType =
+    'callback_query' |
+    'channel_post' |
+    'chosen_inline_result' |
+    'edited_channel_post' |
+    'edited_message' |
+    'inline_query' |
+    'shipping_query' |
+    'pre_checkout_query' |
+    'message' |
+
+    'voice' |
+    'video_note' |
+    'video' |
+    'venue' |
+    'text' |
+    'supergroup_chat_created' |
+    'successful_payment' |
+    'sticker' |
+    'pinned_message' |
+    'photo' |
+    'new_chat_title' |
+    'new_chat_photo' |
+    'new_chat_members' |
+    'migrate_to_chat_id' |
+    'migrate_from_chat_id' |
+    'location' |
+    'left_chat_member' |
+    'invoice' |
+    'group_chat_created' |
+    'game' |
+    'document' |
+    'delete_chat_photo' |
+    'contact' |
+    'channel_chat_created' |
+    'audio';
+
   declare class Telegraf {
     constructor: (token: string, options?: {
       telegram: {
@@ -23,7 +60,7 @@ declare module 'telegraf' {
       username?: string
     }) => this;
 
-    on: (updateTypes: string | string[], middleware: Function) => this;
+    on: (updateTypes: updateType | updateType[], middleware: Function) => this;
     startPolling: (timeout?: number, limit?: number, allowedUpdates?: string[]) => this;
   }
 

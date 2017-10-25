@@ -182,7 +182,7 @@ function prepareEmittingMessageDetails(message: Telegram$Message) {
   const name = Name.from(message.from);
   const msg = prepareMessage(message);
 
-  return {network: botNetwork, room, name, message: msg};
+  return { network: botNetwork, room, name, message: msg };
 }
 
 client
@@ -209,8 +209,7 @@ client
       bus.emit('message', msg);
       next();
     }
-  });
-
-client.startPolling();
+  })
+  .startPolling();
 
 export default client;
