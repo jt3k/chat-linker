@@ -12,6 +12,7 @@ export type Telegram$User = {
   language_code?: string
 };
 
+/* eslint-disable no-use-before-define */
 export type Telegram$Chat = {
   id: number,
   type: string,
@@ -26,49 +27,6 @@ export type Telegram$Chat = {
   pinned_message?: Telegram$Message,
   sticker_set_name?: string,
   can_set_sticker_set?: boolean
-};
-
-export type Telegram$Message = {
-  message_id: number,
-  from: Telegram$User,
-  date: number,
-  chat: Telegram$Chat,
-  forward_from?: Telegram$User,
-  forward_from_chat?: Telegram$Chat,
-  forward_from_message_id?: number,
-  forward_signature?: string,
-  forward_date?: number,
-  reply_to_message?: Telegram$Message,
-  edit_date?: number,
-  author_signature?: string,
-  text?: string,
-  entities?: Telegram$MessageEntity[],
-  caption_entities?: Telegram$MessageEntity[],
-  audio?: Telegram$Audio,
-  document?: Telegram$Document,
-  game?: Telegram$Game,
-  photo?: Telegram$PhotoSize[],
-  sticker?: Telegram$Sticker,
-  video?: Telegram$Video,
-  voice?: Telegram$Voice,
-  video_note?: Telegram$VideoNote,
-  caption?: string,
-  contact?: Telegram$Contact,
-  location?: Telegram$Location,
-  venue?: Telegram$Venue,
-  new_chat_members?: Telegram$User[],
-  left_chat_member?: Telegram$User,
-  new_chat_title?: string,
-  new_chat_photo?: Telegram$PhotoSize[],
-  delete_chat_photo?: true,
-  group_chat_created?: true,
-  supergroup_chat_created?: true,
-  channel_chat_created?: true,
-  migrate_to_chat_id?: number,
-  migrate_from_chat_id?: number,
-  pinned_message?: Telegram$Message,
-  invoice?: Telegram$Invoice,
-  successful_payment?: Telegram$SuccessfulPayment
 };
 
 export type Telegram$MessageEntity = {
@@ -137,7 +95,7 @@ export type Telegram$Location = {
 };
 
 export type Telegram$Venue = {
-  location: Location,
+  location: Telegram$Location,
   title: string,
   address: string,
   foursquare_id?: string
@@ -308,3 +266,47 @@ export type Telegram$ShippingAddress = {
   street_line2: string,
   post_code: string
 };
+
+export type Telegram$Message = {
+  message_id: number,
+  from: Telegram$User,
+  date: number,
+  chat: Telegram$Chat,
+  forward_from?: Telegram$User,
+  forward_from_chat?: Telegram$Chat,
+  forward_from_message_id?: number,
+  forward_signature?: string,
+  forward_date?: number,
+  reply_to_message?: Telegram$Message,
+  edit_date?: number,
+  author_signature?: string,
+  text?: string,
+  entities?: Telegram$MessageEntity[],
+  caption_entities?: Telegram$MessageEntity[],
+  audio?: Telegram$Audio,
+  document?: Telegram$Document,
+  game?: Telegram$Game,
+  photo?: Telegram$PhotoSize[],
+  sticker?: Telegram$Sticker,
+  video?: Telegram$Video,
+  voice?: Telegram$Voice,
+  video_note?: Telegram$VideoNote,
+  caption?: string,
+  contact?: Telegram$Contact,
+  location?: Telegram$Location,
+  venue?: Telegram$Venue,
+  new_chat_members?: Telegram$User[],
+  left_chat_member?: Telegram$User,
+  new_chat_title?: string,
+  new_chat_photo?: Telegram$PhotoSize[],
+  delete_chat_photo?: true,
+  group_chat_created?: true,
+  supergroup_chat_created?: true,
+  channel_chat_created?: true,
+  migrate_to_chat_id?: number,
+  migrate_from_chat_id?: number,
+  pinned_message?: Telegram$Message,
+  invoice?: Telegram$Invoice,
+  successful_payment?: Telegram$SuccessfulPayment
+};
+

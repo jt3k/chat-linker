@@ -1,12 +1,11 @@
 // @flow
 
-import type { Config } from './Config';
-import type { Bot } from '../../Bot';
+import config from '../../../app-config';
+import type {Bot} from '../../Bot';
+import type {Config} from './config';
 
 import JabberBot from './bot';
 import client from './client';
-
-import config from '../../../app-config';
 
 const jabberConfig: Config = config.jabber;
 

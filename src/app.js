@@ -4,10 +4,9 @@
 //  core
 //
 
-import type { Bot } from './Bot';
-import type { onMessage } from './bus';
+import type {Bot} from './bot';
+import type bus, {onMessage} from './bus';
 
-import bus from './bus';
 import * as bots from './bots';
 
 const botsList: Bot[] = [];
@@ -19,10 +18,10 @@ Object.keys(bots).forEach(k => {
   global[k] = bots[k];
 });
 
-bus.on('message', ({ network, room, name, message }: onMessage) => {
+bus.on('message', ({network, room, name, message}: onMessage) => {
   const botsToPropagateMsg = botsList.filter(bot => bot.network !== network);
 
   botsToPropagateMsg.forEach(bot => {
-    bot.send({ name, message, room });
+    bot.send({name, message, room});
   });
 });

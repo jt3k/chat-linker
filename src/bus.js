@@ -19,8 +19,10 @@ class Emitter extends EventEmitter {}
 
 const bus = new Emitter();
 
-bus.on('message', ({ network, room, name, message }: onMessage) => {
-  if (!__DEV__) return;
+bus.on('message', ({network, room, name, message}: onMessage) => {
+  if (!__DEV__) {
+    return;
+  }
 
   console.log(`${Symbol.keyFor(network) || ''} "${room}": <${name}> ${message}`);
 });

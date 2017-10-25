@@ -1,13 +1,17 @@
 // @flow
 
-import type { Config } from './Config';
-import EventEmitter from 'events';
+import Telegraf from 'telegraf';
 
+import appConfig from '../../../app-config';
+import bus from '../../bus';
 import type {
   Telegram$User,
   Telegram$Chat,
   Telegram$Message
 } from './telegram.h';
+
+import type {Config} from './config';
+import botNetwork from './network';
 
 type Context = {
   telegram: Object,
@@ -28,17 +32,11 @@ type Context = {
   match?: ?string[],
 };
 
-import Telegraf from 'telegraf';
-
-import appConfig from '../../../app-config';
-import bus from '../../bus';
-import botNetwork from './network';
-
 const config: Config = appConfig.telegram;
 
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
-const { BOT_TOKEN } = config;
+const {BOT_TOKEN} = config;
 
 const client = new Telegraf(BOT_TOKEN);
 
@@ -73,14 +71,16 @@ class ReplyToMessage extends Message {
     const replyToMessage = msg.reply_to_message;
     const isReplyWithText = replyToMessage && replyToMessage.text;
 
-    return !!isReplyWithText;
+    return Boolean(isReplyWithText);
   }
 
   getDetails(): [string, string] {
     const msg = this.msg;
     const replyToMessage = msg.reply_to_message;
 
-    if (!replyToMessage) return ['', ''];
+    if (!replyToMessage) {
+      return ['', ''];
+    }
 
     const nick = Name.from(replyToMessage.from);
     const message = replyToMessage && replyToMessage.text;
@@ -101,13 +101,15 @@ class ReplyToMessage extends Message {
 
 class ForwardedMessage extends Message {
   static test(msg: Telegram$Message): boolean {
-    return !!msg.forward_from;
+    return Boolean(msg.forward_from);
   }
 
   toString(): string {
     const msg = this.msg;
 
-    if (!msg.forward_from) return '';
+    if (!msg.forward_from) {
+      return '';
+    }
 
     const nick = Name.from(msg.forward_from);
 
@@ -122,9 +124,11 @@ class BotMessage extends ReplyToMessage {
   static test(msg: Telegram$Message): boolean {
     const replyToMessage = msg.reply_to_message;
 
-    if (!replyToMessage) return false;
+    if (!replyToMessage) {
+      return false;
+    }
 
-    const isReplyWithText: boolean = !!replyToMessage.text;
+    const isReplyWithText: boolean = Boolean(replyToMessage.text);
 
     if (!isReplyWithText) {
       return false;
@@ -182,12 +186,14 @@ function prepareEmittingMessageDetails(message: Telegram$Message) {
   const name = Name.from(message.from);
   const msg = prepareMessage(message);
 
-  return { network: botNetwork, room, name, message: msg };
+  return {network: botNetwork, room, name, message: msg};
 }
 
 client
   .on('text', (ctx: Context, next: (*) => Promise<*>) => {
-    if (!ctx.message) return;
+    if (!ctx.message) {
+      return;
+    }
 
     const msg = prepareEmittingMessageDetails(ctx.message);
     if (msg) {
@@ -196,14 +202,18 @@ client
     }
   })
   .on('sticker', (ctx: Context, next: (*) => Promise<*>) => {
-    if (!ctx.message) return;
+    if (!ctx.message) {
+      return;
+    }
 
     const message: Telegram$Message = ctx.message;
 
     const msg = prepareEmittingMessageDetails(message);
     if (msg) {
       const sticker = message.sticker;
-      if (!sticker) return;
+      if (!sticker) {
+        return;
+      }
       const emoji = sticker.emoji;
       msg.message = emoji || msg.message;
       bus.emit('message', msg);

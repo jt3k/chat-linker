@@ -1,7 +1,7 @@
 // @flow
 
-import type { Bot } from '../../Bot';
-import type { Config } from './Config';
+import type {Bot} from '../../Bot';
+import type {Config} from './Config';
 
 import botNetwork from './network';
 
@@ -22,8 +22,8 @@ class TelegramBot implements Bot {
     this.network = botNetwork;
   }
 
-  send({ name, message }: { name: string, message: string }): this {
-    const { config } = this;
+  send({name, message}: { name: string, message: string }): this {
+    const {config} = this;
     const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
     message = htmlEscape(message);
@@ -36,7 +36,7 @@ class TelegramBot implements Bot {
     this.client.telegram.sendMessage(
       chat.id,
       textMessage,
-      { parse_mode: 'HTML' }
+      {parse_mode: 'HTML'}
     );
 
     return this;

@@ -40,14 +40,20 @@
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.6.1",
     "babel-preset-flow": "^6.23.0",
+    "eslint-plugin-flowtype": "^2.39.1",
+    "babel-eslint": "^8.0.1",
     "flow-bin": "^0.57.3",
     "husky": "^0.11.9",
     "xo": "^0.17.1"
   },
   "xo": {
+    "parser": "babel-eslint",
     "esnext": true,
     "envs": [
       "node"
+    ],
+    "plugins": [
+      "flowtype"
     ],
     "rules": {
       "camelcase": [
