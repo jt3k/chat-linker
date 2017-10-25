@@ -1,17 +1,17 @@
 // @flow
 
 import Telegraf from 'telegraf';
-
 import appConfig from '../../../app-config';
 import bus from '../../bus';
+import botNetwork from './network';
+
+import type { Config } from './config';
+
 import type {
   Telegram$User,
   Telegram$Chat,
   Telegram$Message
 } from './telegram.h';
-
-import type { Config } from './config';
-import botNetwork from './network';
 
 type Context = {
   telegram: Object,

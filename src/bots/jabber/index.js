@@ -1,6 +1,7 @@
 // @flow
 
 import config from '../../../app-config';
+
 import type { Bot } from '../../Bot';
 import type { Config } from './config';
 

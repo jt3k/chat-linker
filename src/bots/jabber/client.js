@@ -3,10 +3,10 @@
 import xmpp from 'node-xmpp';
 import appConfig from '../../../app-config';
 import bus from '../../bus';
+import botNetwork from './network';
+
 import type { Config } from './Config';
 import type { XmppClient } from './types';
-
-import botNetwork from './network';
 
 const config: Config = appConfig.jabber;
 

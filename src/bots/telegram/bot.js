@@ -1,7 +1,7 @@
 // @flow
 
-import type { Bot } from '../../Bot';
-import type { Config } from './Config';
+import type { Bot } from '../../bot';
+import type { Config } from './config';
 
 import botNetwork from './network';
 
