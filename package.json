@@ -16,7 +16,7 @@
   "scripts": {
     "xo": "xo",
     "flow": "flow .",
-    "test": "ls -l -f -a && xo && flow .",
+    "test": "ls -l -f -a src && xo && flow .",
     "build": "babel src/ -d dist/",
     "prod": "cross-env NODE_ENV=prod node dist/app.js",
     "dev": "cross-env NODE_ENV=dev node --inspect dist/app.js",
