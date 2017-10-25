@@ -1,11 +1,32 @@
 // @flow
 
 import type { Config } from './Config';
+import EventEmitter from 'events';
 
 import type {
   Telegram$User,
+  Telegram$Chat,
   Telegram$Message
 } from './telegram.h';
+
+type Context = {
+  telegram: Object,
+  updateType: string,
+  updateSubTypes?: string,
+  me?: string,
+  message?: Telegram$Message,
+  editedMessage?: Telegram$Message,
+  // inlineQuery?: ,
+  // chosenInlineResult?: ,
+  // callbackQuery?: ,
+  // shippingQuery?: ,
+  // preCheckoutQuery?: ,
+  // channelPost?: ,
+  // editedChannelPost?: ,
+  chat?: Telegram$Chat,
+  from?: Telegram$User,
+  match?: ?string[],
+};
 
 import Telegraf from 'telegraf';
 
@@ -19,7 +40,7 @@ const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
 const { BOT_TOKEN } = config;
 
-const client: Telegraf = new Telegraf(BOT_TOKEN);
+const client = new Telegraf(BOT_TOKEN);
 
 class Name {
   static from(user: Telegram$User): string {
@@ -164,24 +185,31 @@ function prepareEmittingMessageDetails(message: Telegram$Message) {
   return {network: botNetwork, room, name, message: msg};
 }
 
-client.on('text', (ctx: Object, next: Function) => {
-  const msg = prepareEmittingMessageDetails(ctx.message);
-  if (msg) {
-    bus.emit('message', msg);
-    next();
-  }
-});
+client
+  .on('text', (ctx: Context, next: (*) => Promise<*>) => {
+    if (!ctx.message) return;
 
-client.on('sticker', (ctx: Object, next: Function) => {
-  const msg = prepareEmittingMessageDetails(ctx.message);
-  if (msg) {
-    const sticker = ctx.message.sticker;
-    const emoji = sticker.emoji;
-    msg.message = emoji || msg.message;
-    bus.emit('message', msg);
-    next();
-  }
-});
+    const msg = prepareEmittingMessageDetails(ctx.message);
+    if (msg) {
+      bus.emit('message', msg);
+      next();
+    }
+  })
+  .on('sticker', (ctx: Context, next: (*) => Promise<*>) => {
+    if (!ctx.message) return;
+
+    const message: Telegram$Message = ctx.message;
+
+    const msg = prepareEmittingMessageDetails(message);
+    if (msg) {
+      const sticker = message.sticker;
+      if (!sticker) return;
+      const emoji = sticker.emoji;
+      msg.message = emoji || msg.message;
+      bus.emit('message', msg);
+      next();
+    }
+  });
 
 client.startPolling();
 

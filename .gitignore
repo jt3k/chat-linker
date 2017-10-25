@@ -43,7 +43,7 @@ app-config.json
 package-lock.json
 
 # flow-typed
-flow-typed
+flow-typed/npm
 
 # dist directory
 /dist
