@@ -39,6 +39,12 @@ To determine Telegram room parameters, follow the procedure:
    ```
 5. To make all room messages visible to the bot, make it a room admin
 
+### Build
+
+```sh
+$ npm run build
+```
+
 ### Run
 
 To start the bot:
@@ -76,4 +82,3 @@ $ node ./node_modules/husky/bin/install.js
 ## License
 
 MIT © [Andrey Gurtovoy](https://github.com/jt3k)
-
