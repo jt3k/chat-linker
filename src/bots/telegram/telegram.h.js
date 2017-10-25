@@ -14,6 +14,22 @@ export type Telegram$User = {
   language_code?: string
 };
 
+export type Telegram$Chat = {
+  id: number,
+  type: string,
+  title?: string,
+  username?: string,
+  first_name?: string,
+  last_name?: string,
+  all_members_are_administrators?: boolean,
+  photo?: Telegram$ChatPhoto,
+  description?: string,
+  invite_link?: string,
+  pinned_message?: Telegram$Message,
+  sticker_set_name?: string,
+  can_set_sticker_set?: boolean
+};
+
 export type Telegram$Message = {
   message_id: number,
   from: Telegram$User,
@@ -55,22 +71,6 @@ export type Telegram$Message = {
   pinned_message?: Telegram$Message,
   invoice?: Telegram$Invoice,
   successful_payment?: Telegram$SuccessfulPayment
-};
-
-export type Telegram$Chat = {
-  id: number,
-  type: string,
-  title?: string,
-  username?: string,
-  first_name?: string,
-  last_name?: string,
-  all_members_are_administrators?: boolean,
-  photo?: Telegram$ChatPhoto,
-  description?: string,
-  invite_link?: string,
-  pinned_message?: Telegram$Message,
-  sticker_set_name?: string,
-  can_set_sticker_set?: boolean
 };
 
 export type Telegram$MessageEntity = {
