@@ -1,1 +1,1 @@
-web: ./crypter.js dec && node ./dist/app.js
+web: ./crypter.js dec && npm run build && node ./dist/app.js

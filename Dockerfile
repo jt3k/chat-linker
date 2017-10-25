@@ -4,4 +4,5 @@ RUN git clone https://github.com/jt3k/chat-linker.git /usr/app/src && cd /usr/ap
 RUN cd /usr/app/src && npm install # TODO: Not stable enough; migrate to yarn
 COPY app-config.json /usr/app/src/app-config.json
 WORKDIR /usr/app/src
+CMD ["npm", "run build"]
 CMD ["npm", "run prod"]
