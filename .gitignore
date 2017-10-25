@@ -39,8 +39,9 @@ jspm_packages
 # chat-linker app configuration
 app-config.json
 
-# npm lockfile
+# lockfiles
 package-lock.json
+yarn.lock
 
 # flow-typed
 flow-typed/npm
