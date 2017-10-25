@@ -5,7 +5,7 @@ import appConfig from '../../../app-config';
 import bus from '../../bus';
 import botNetwork from './network';
 
-import type { Config } from './Config';
+import type { Config } from './config';
 import type { XmppClient } from './types';
 
 const config: Config = appConfig.jabber;

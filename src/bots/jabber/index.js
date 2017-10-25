@@ -2,7 +2,7 @@
 
 import config from '../../../app-config';
 
-import type { Bot } from '../../Bot';
+import type { Bot } from '../../bot';
 import type { Config } from './config';
 
 import JabberBot from './bot';
