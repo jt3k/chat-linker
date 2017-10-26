@@ -17,7 +17,7 @@ class JabberBot implements Bot {
     this.network = botNetwork;
   }
 
-  send({ name, message }: { name: string, message: string }): this {
+  send({ name, message }: { name: string, message: string }): void {
     const { client, config } = this;
 
     const textMessage = (config.messageTemplate || '<@{name}> {message}')
@@ -27,8 +27,6 @@ class JabberBot implements Bot {
     client.sendMessage(
       textMessage
     );
-
-    return this;
   }
 }
 

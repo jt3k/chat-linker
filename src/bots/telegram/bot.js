@@ -22,7 +22,7 @@ class TelegramBot implements Bot {
     this.network = botNetwork;
   }
 
-  send({ name, message }: { name: string, message: string }): this {
+  send({ name, message }: { name: string, message: string }): void {
     const { config } = this;
     const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
@@ -38,8 +38,6 @@ class TelegramBot implements Bot {
       textMessage,
       { parse_mode: 'HTML' }
     );
-
-    return this;
   }
 }
 
