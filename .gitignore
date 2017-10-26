@@ -38,3 +38,12 @@ jspm_packages
 
 # chat-linker app configuration
 app-config.json
+
+# lockfiles
+package-lock.json
+
+# flow-typed
+flow-typed/npm
+
+# dist directory
+/dist

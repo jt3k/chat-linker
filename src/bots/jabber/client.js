@@ -1,17 +1,25 @@
-const xmpp = require('node-xmpp');
-const bus = require('../../bus');
+// @flow
 
-const {JID} = xmpp;
-const config = require('../../app-config').jabber;
-const botNetwork = require('./network');
+import xmpp from 'node-xmpp';
+// $FlowFixMe
+import appConfig from '../../../app-config';
+import bus from '../../bus';
+import botNetwork from './network';
 
-const chat = config[process.env.NODE_ENV];
+import type { Config } from './config';
+import type { XmppClient } from './types';
 
-const connection = config.connection;
+const config: Config = appConfig.jabber;
 
-const client = new xmpp.Client(connection);
+const { JID } = xmpp;
+const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
+
+const { connection } = config;
+
+const client: XmppClient = new xmpp.Client(connection);
+
 // Keep alive
-const socket = client.connection.socket;
+const { socket } = client.connection;
 socket.setTimeout(0);
 socket.setKeepAlive(true, 10000);
 
@@ -31,6 +39,7 @@ client.on('online', () => {
 
 global.sss = [];
 global.eee = [];
+
 client.on('stanza', stanza => {
   try {
     let message = stanza.is('message') && stanza.getChildElements().find(item => item.is('body'));
@@ -41,12 +50,13 @@ client.on('stanza', stanza => {
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
       message = message.getText();
+
       const from = new JID(stanza.attr('from'));
       const room = `${from.getLocal()}@${from.getDomain()}`;
       const name = from.getResource();
       const network = botNetwork;
 
-      bus.emit('message', {network, room, name, message});
+      bus.emit('message', { network, room, name, message });
     }
   } catch (err) {
     global.sss.push(stanza);
@@ -66,7 +76,7 @@ if (chat.pingMs) {
       to: server,
       from: jid,
       id: `ping${pingCounter++}`
-    }).c('ping', {xmlns: 'urn:xmpp:ping'});
+    }).c('ping', { xmlns: 'urn:xmpp:ping' });
     client.send(iq);
 
     setTimeout(schedulePing, chat.pingMs);
@@ -87,4 +97,4 @@ client.sendMessage = function (textMessage) {
     .t(textMessage));
 };
 
-module.exports = client;
+export default client;
