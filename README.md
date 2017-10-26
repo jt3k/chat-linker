@@ -41,7 +41,7 @@ To determine Telegram room parameters, follow the procedure:
 
 ### Build
 
-```sh
+```console
 $ npm run build
 ```
 
