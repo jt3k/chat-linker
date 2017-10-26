@@ -1,8 +1,8 @@
 // @flow
 
+import Telegraf from 'telegraf';
 import type { Bot } from '../../bot';
 import type { Config } from './config';
-
 import botNetwork from './network';
 
 // html-escaping only for telegram
@@ -12,11 +12,11 @@ const htmlEscape = str => str
   .replace(/>/g, '&gt;');
 
 class TelegramBot implements Bot {
-  client: Object;
+  client: Telegraf;
   config: Config;
   network: Symbol;
 
-  constructor(client: Object, config: Config) {
+  constructor(client: Telegraf, config: Config) {
     this.client = client;
     this.config = config;
     this.network = botNetwork;

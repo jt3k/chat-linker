@@ -13,6 +13,15 @@
  * https://github.com/flowtype/flow-typed
  */
 
+declare class Telegram {
+   constructor: (token: string, options?: {
+     agent: http$Agent,
+     webhookReply: boolean
+   }) => this;
+
+   sendMessage: (chatId: number | string, text: string, extra?: Object) => Promise<*>;
+}
+
 declare module 'telegraf' {
   declare type updateType =
     'callback_query' |
@@ -59,6 +68,8 @@ declare module 'telegraf' {
       },
       username?: string
     }) => this;
+
+    telegram: Telegram;
 
     on: (updateTypes: updateType | updateType[], middleware: Function) => this;
     startPolling: (timeout?: number, limit?: number, allowedUpdates?: string[]) => this;
@@ -125,7 +136,7 @@ declare module 'telegraf/lib/telegraf' {
 }
 
 declare module 'telegraf/lib/telegram' {
-  declare module.exports: any;
+  declare module.exports: typeof Telegram;
 }
 
 // Filename aliases
