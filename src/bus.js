@@ -6,7 +6,7 @@
 
 import EventEmitter from 'events';
 
-export type onMessage = {
+export type MessageEvent = {
   network: Symbol,
   room: string,
   name: string,
@@ -19,7 +19,7 @@ class Emitter extends EventEmitter {}
 
 const bus = new Emitter();
 
-bus.on('message', ({ network, room, name, message }: onMessage) => {
+bus.on('message', ({ network, room, name, message }: MessageEvent) => {
   if (!__DEV__) {
     return;
   }

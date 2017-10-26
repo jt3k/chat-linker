@@ -5,7 +5,7 @@
 //
 
 import type { Bot } from './bot';
-import type { onMessage } from './bus';
+import type { MessageEvent } from './bus';
 
 // eslint-disable-next-line no-duplicate-imports
 import bus from './bus';
@@ -20,7 +20,7 @@ Object.keys(bots).forEach(k => {
   global[k] = bots[k];
 });
 
-bus.on('message', ({ network, room, name, message }: onMessage) => {
+bus.on('message', ({ network, room, name, message }: MessageEvent) => {
   const botsToPropagateMsg = botsList.filter(bot => bot.network !== network);
 
   botsToPropagateMsg.forEach(bot => {
