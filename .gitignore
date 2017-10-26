@@ -41,7 +41,6 @@ app-config.json
 
 # lockfiles
 package-lock.json
-yarn.lock
 
 # flow-typed
 flow-typed/npm
