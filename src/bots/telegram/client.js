@@ -70,9 +70,11 @@ class Message {
 class ReplyToMessage extends Message {
   static test(msg: Telegram$Message): boolean {
     const replyToMessage = msg.reply_to_message;
-    const isReplyWithText = replyToMessage && replyToMessage.text;
 
-    return Boolean(isReplyWithText);
+    const isReplyWithText = replyToMessage && replyToMessage.text;
+    const isReplyWithSticker = replyToMessage && replyToMessage.sticker;
+
+    return Boolean(isReplyWithText || isReplyWithSticker);
   }
 
   getDetails(): [string, string] {
@@ -84,9 +86,14 @@ class ReplyToMessage extends Message {
     }
 
     const nick = Name.from(replyToMessage.from);
-    const message = replyToMessage && replyToMessage.text;
+    const sticker = replyToMessage.sticker;
+    let message = replyToMessage.text || '';
 
-    return [nick, message || ''];
+    if (sticker && sticker.emoji) {
+      message += `[Sticker ${sticker.emoji}]`;
+    }
+
+    return [nick, message];
   }
 
   toString(): string {
@@ -216,7 +223,7 @@ client
         return;
       }
       const emoji = sticker.emoji;
-      msg.message += emoji ? ` [Sticker ${emoji}]` : '';
+      msg.message += emoji ? `[Sticker ${emoji}]` : '';
       bus.emit('message', msg);
       next();
     }
