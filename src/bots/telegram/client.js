@@ -170,7 +170,7 @@ function messageFactory(msg: Telegram$Message) {
   return new ReplyToMessage(msg);
 }
 
-function prepareMessage(msg) {
+function prepareMessage(msg): string {
   const message = messageFactory(msg);
   const stringMessage = message.toString();
 
@@ -216,7 +216,7 @@ client
         return;
       }
       const emoji = sticker.emoji;
-      msg.message = emoji || msg.message;
+      msg.message += emoji ? ` [Sticker ${emoji}]` : '';
       bus.emit('message', msg);
       next();
     }
