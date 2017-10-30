@@ -10,7 +10,6 @@ export type Config = {
   prod: {
     id: number,
     title: string,
-    username: string,
     type: string
   },
   messageTemplate: string
