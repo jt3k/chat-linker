@@ -131,8 +131,10 @@ class ForwardedMessage extends Message {
 
     const nick = Name.from(msg.forward_from);
 
-    // adds quoting brackets
-    const message = msg.text ? msg.text.replace(/\n/g, '\n>> ') : '';
+    delete msg.forward_from;
+    const message = prepareMessage(msg)
+      // adds quoting brackets
+      .replace(/\n/g, '\n>> ');
 
     return `>> <${nick}> ${message}`;
   }
@@ -203,6 +205,10 @@ class BotMessage extends ReplyToMessage {
 }
 
 function messageFactory(msg: Telegram$Message): Message {
+  if (ForwardedMessage.test(msg)) {
+    return new ForwardedMessage(msg);
+  }
+
   if (StickerMessage.test(msg)) {
     return new StickerMessage(msg);
   }
@@ -213,10 +219,6 @@ function messageFactory(msg: Telegram$Message): Message {
 
   if (DocumentMessage.test(msg)) {
     return new DocumentMessage(msg);
-  }
-
-  if (ForwardedMessage.test(msg)) {
-    return new ForwardedMessage(msg);
   }
 
   if (!ReplyToMessage.test(msg)) {
