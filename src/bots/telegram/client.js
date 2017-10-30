@@ -117,43 +117,13 @@ class DocumentMessage extends Message {
   }
 }
 
-class ReplyToMessage extends Message {
-  static test(msg: Telegram$Message): boolean {
-    return Boolean(msg.reply_to_message);
-  }
-
-  getDetails(): [string, string] {
-    const msg = this.msg;
-    const replyToMessage = msg.reply_to_message;
-
-    if (!replyToMessage) {
-      return ['', ''];
-    }
-
-    const nick = Name.from(replyToMessage.from);
-    const message = prepareMessage(replyToMessage);
-
-    return [nick, message];
-  }
-
-  toString(): string {
-    const msg = this.msg;
-    let [nick, message] = this.getDetails();
-
-    // adds quoting brackets
-    message = message.replace(/\n/g, '\n>> ');
-
-    return `>> <${nick}> ${message}\n${msg.text || ''}`;
-  }
-}
-
 class ForwardedMessage extends Message {
   static test(msg: Telegram$Message): boolean {
     return Boolean(msg.forward_from);
   }
 
   toString(): string {
-    const msg = this.msg;
+    const { msg } = this;
 
     if (!msg.forward_from) {
       return '';
@@ -168,9 +138,39 @@ class ForwardedMessage extends Message {
   }
 }
 
+class ReplyToMessage extends Message {
+  static test(msg: Telegram$Message): boolean {
+    return Boolean(msg.reply_to_message);
+  }
+
+  getDetails(): [string, string] {
+    const msg = this.msg;
+    const replyToMessage: ?Telegram$Message = msg.reply_to_message;
+
+    if (!replyToMessage) {
+      return ['', ''];
+    }
+
+    const nick = Name.from(replyToMessage.from);
+    const message = prepareMessage(replyToMessage);
+
+    return [nick, message];
+  }
+
+  toString(): string {
+    const { msg } = this;
+    let [nick, message] = this.getDetails();
+
+    // adds quoting brackets
+    message = message.replace(/\n/g, '\n>> ');
+
+    return `>> <${nick}> ${message}\n${msg.text || ''}`;
+  }
+}
+
 class BotMessage extends ReplyToMessage {
   static test(msg: Telegram$Message): boolean {
-    const replyToMessage = msg.reply_to_message;
+    const replyToMessage: ?Telegram$Message = msg.reply_to_message;
 
     if (!replyToMessage) {
       return false;
@@ -190,7 +190,8 @@ class BotMessage extends ReplyToMessage {
   }
 
   getDetails(): [string, string] {
-    const msg = this.msg;
+    const { msg } = this;
+
     const replyToMessage = msg.reply_to_message;
     const text = replyToMessage ? (replyToMessage.text || '') : '';
     const lineEndPos = text.indexOf('\n');
