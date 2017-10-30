@@ -69,12 +69,7 @@ class Message {
 
 class ReplyToMessage extends Message {
   static test(msg: Telegram$Message): boolean {
-    const replyToMessage = msg.reply_to_message;
-
-    const isReplyWithText = replyToMessage && replyToMessage.text;
-    const isReplyWithSticker = replyToMessage && replyToMessage.sticker;
-
-    return Boolean(isReplyWithText || isReplyWithSticker);
+    return Boolean(msg.reply_to_message);
   }
 
   getDetails(): [string, string] {
