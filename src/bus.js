@@ -13,16 +13,12 @@ export type MessageEvent = {
   message: string
 };
 
-const __DEV__ = process.env.NODE_ENV === 'dev';
-
 class Emitter extends EventEmitter {}
 
 const bus = new Emitter();
 
-bus.on('message', ({ network, room, name, message }: MessageEvent) => {
-  if (__DEV__) {
-    console.log(`${Symbol.keyFor(network) || ''} "${room}": <${name}> ${message}`);
-  }
-});
+export function emitMessage(e: MessageEvent) {
+  bus.emit('message', e);
+}
 
 export default bus;

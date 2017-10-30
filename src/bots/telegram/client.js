@@ -3,7 +3,9 @@
 import Telegraf from 'telegraf';
 // $FlowFixMe
 import appConfig from '../../../app-config';
-import bus from '../../bus';
+import { emitMessage } from '../../bus';
+// eslint-disable-next-line no-duplicate-imports
+import type { MessageEvent } from '../../bus';
 import botNetwork from './network';
 
 import type { Config } from './config';
@@ -67,6 +69,54 @@ class Message {
   }
 }
 
+class StickerMessage extends Message {
+  static test(msg: Telegram$Message): boolean {
+    return Boolean(msg.sticker);
+  }
+
+  toString(): string {
+    let message = this.msg.text || '';
+
+    const { sticker } = this.msg;
+
+    if (!sticker) {
+      return message;
+    }
+
+    const { emoji } = sticker;
+
+    message += emoji ? `[Sticker ${emoji}]` : '';
+
+    return message;
+  }
+}
+
+class PhotoMessage extends Message {
+  static test(msg: Telegram$Message): boolean {
+    return Boolean(msg.photo);
+  }
+
+  toString(): string {
+    const caption = this.msg.caption || '';
+    const message = `[Photo] ${caption}`;
+
+    return message;
+  }
+}
+
+class DocumentMessage extends Message {
+  static test(msg: Telegram$Message): boolean {
+    return Boolean(msg.document);
+  }
+
+  toString(): string {
+    const caption = this.msg.caption || '';
+    const message = `[Document] ${caption}`;
+
+    return message;
+  }
+}
+
 class ReplyToMessage extends Message {
   static test(msg: Telegram$Message): boolean {
     return Boolean(msg.reply_to_message);
@@ -81,12 +131,7 @@ class ReplyToMessage extends Message {
     }
 
     const nick = Name.from(replyToMessage.from);
-    const sticker = replyToMessage.sticker;
-    let message = replyToMessage.text || '';
-
-    if (sticker && sticker.emoji) {
-      message += `[Sticker ${sticker.emoji}]`;
-    }
+    const message = prepareMessage(replyToMessage);
 
     return [nick, message];
   }
@@ -131,7 +176,7 @@ class BotMessage extends ReplyToMessage {
       return false;
     }
 
-    const isReplyWithText: boolean = Boolean(replyToMessage.text);
+    const isReplyWithText = Boolean(replyToMessage.text);
 
     if (!isReplyWithText) {
       return false;
@@ -156,7 +201,19 @@ class BotMessage extends ReplyToMessage {
   }
 }
 
-function messageFactory(msg: Telegram$Message) {
+function messageFactory(msg: Telegram$Message): Message {
+  if (StickerMessage.test(msg)) {
+    return new StickerMessage(msg);
+  }
+
+  if (PhotoMessage.test(msg)) {
+    return new PhotoMessage(msg);
+  }
+
+  if (DocumentMessage.test(msg)) {
+    return new DocumentMessage(msg);
+  }
+
   if (ForwardedMessage.test(msg)) {
     return new ForwardedMessage(msg);
   }
@@ -179,8 +236,10 @@ function prepareMessage(msg): string {
   return stringMessage;
 }
 
-function prepareEmittingMessageDetails(message: Telegram$Message) {
-  const room = message.chat.title;
+function prepareEmittingMessageDetails(
+  message: Telegram$Message
+): ?MessageEvent {
+  const room = message.chat.title || '';
 
   if (room !== chat.title) {
     return null;
@@ -192,37 +251,24 @@ function prepareEmittingMessageDetails(message: Telegram$Message) {
   return { network: botNetwork, room, name, message: msg };
 }
 
+function onMessage(ctx: Context, next: (*) => Promise<*>) {
+  if (!ctx.message) {
+    return;
+  }
+
+  const e = prepareEmittingMessageDetails(ctx.message);
+
+  if (e) {
+    emitMessage(e);
+    next();
+  }
+}
+
 client
-  .on('text', (ctx: Context, next: (*) => Promise<*>) => {
-    if (!ctx.message) {
-      return;
-    }
-
-    const msg = prepareEmittingMessageDetails(ctx.message);
-    if (msg) {
-      bus.emit('message', msg);
-      next();
-    }
-  })
-  .on('sticker', (ctx: Context, next: (*) => Promise<*>) => {
-    if (!ctx.message) {
-      return;
-    }
-
-    const message: Telegram$Message = ctx.message;
-
-    const msg = prepareEmittingMessageDetails(message);
-    if (msg) {
-      const sticker = message.sticker;
-      if (!sticker) {
-        return;
-      }
-      const emoji = sticker.emoji;
-      msg.message += emoji ? `[Sticker ${emoji}]` : '';
-      bus.emit('message', msg);
-      next();
-    }
-  })
+  .on('text', onMessage)
+  .on('sticker', onMessage)
+  .on('photo', onMessage)
+  .on('document', onMessage)
   .startPolling();
 
 export default client;

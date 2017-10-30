@@ -3,7 +3,7 @@
 import xmpp from 'node-xmpp';
 // $FlowFixMe
 import appConfig from '../../../app-config';
-import bus from '../../bus';
+import { emitMessage } from '../../bus';
 import botNetwork from './network';
 
 import type { Config } from './config';
@@ -56,7 +56,7 @@ client.on('stanza', stanza => {
       const name = from.getResource();
       const network = botNetwork;
 
-      bus.emit('message', { network, room, name, message });
+      emitMessage({ network, room, name, message });
     }
   } catch (err) {
     global.sss.push(stanza);
