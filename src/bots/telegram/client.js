@@ -117,29 +117,6 @@ class DocumentMessage extends Message {
   }
 }
 
-class ForwardedMessage extends Message {
-  static test(msg: Telegram$Message): boolean {
-    return Boolean(msg.forward_from);
-  }
-
-  toString(): string {
-    const { msg } = this;
-
-    if (!msg.forward_from) {
-      return '';
-    }
-
-    const nick = Name.from(msg.forward_from);
-
-    delete msg.forward_from;
-    const message = prepareMessage(msg)
-      // adds quoting brackets
-      .replace(/\n/g, '\n>> ');
-
-    return `>> <${nick}> ${message}`;
-  }
-}
-
 class ReplyToMessage extends Message {
   static test(msg: Telegram$Message): boolean {
     return Boolean(msg.reply_to_message);
@@ -205,10 +182,6 @@ class BotMessage extends ReplyToMessage {
 }
 
 function messageFactory(msg: Telegram$Message): Message {
-  if (ForwardedMessage.test(msg)) {
-    return new ForwardedMessage(msg);
-  }
-
   if (StickerMessage.test(msg)) {
     return new StickerMessage(msg);
   }
@@ -232,9 +205,18 @@ function messageFactory(msg: Telegram$Message): Message {
   return new ReplyToMessage(msg);
 }
 
-function prepareMessage(msg): string {
+function prepareMessage(msg: Telegram$Message): string {
   const message = messageFactory(msg);
-  const stringMessage = message.toString();
+  let stringMessage = message.toString();
+
+  if (msg.forward_from) {
+    const nick = Name.from(msg.forward_from);
+
+    // adds quoting brackets
+    stringMessage = stringMessage.replace(/\n/g, '\n>> ');
+
+    return `>> <${nick}> ${stringMessage}`;
+  }
 
   return stringMessage;
 }
