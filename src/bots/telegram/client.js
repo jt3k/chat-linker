@@ -3,9 +3,7 @@
 import Telegraf from 'telegraf';
 // $FlowFixMe
 import appConfig from '../../../app-config';
-import { emitMessage } from '../../bus';
-// eslint-disable-next-line no-duplicate-imports
-import type { MessageEvent } from '../../bus';
+import { type MessageEvent, emitMessage } from '../../bus';
 import botNetwork from './network';
 
 import type { Config } from './config';

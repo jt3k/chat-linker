@@ -5,10 +5,7 @@
 //
 
 import type { Bot } from './bot';
-import type { MessageEvent } from './bus';
-
-// eslint-disable-next-line no-duplicate-imports
-import bus from './bus';
+import bus, { type MessageEvent } from './bus';
 import * as bots from './bots';
 
 const __DEV__ = process.env.NODE_ENV === 'dev';
