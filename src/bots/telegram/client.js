@@ -194,15 +194,15 @@ function messageFactory(msg: Telegram$Message): Message {
     return new DocumentMessage(msg);
   }
 
-  if (!ReplyToMessage.test(msg)) {
-    return new Message(msg);
-  }
-
   if (BotMessage.test(msg)) {
     return new BotMessage(msg);
   }
 
-  return new ReplyToMessage(msg);
+  if (ReplyToMessage.test(msg)) {
+    return new ReplyToMessage(msg);
+  }
+
+  return new Message(msg);
 }
 
 function prepareMessage(msg: Telegram$Message): string {
