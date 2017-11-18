@@ -33,7 +33,7 @@
   ],
   "dependencies": {
     "cross-env": "^5.0.0",
-    "node-xmpp": "^1.0.4",
+    "node-xmpp-client": "^3.1.3",
     "telegraf": "^3.3.1"
   },
   "devDependencies": {
@@ -69,7 +69,10 @@
         0
       ],
       "linebreak-style": 0,
-      "object-curly-spacing": [2,"always"],
+      "object-curly-spacing": [
+        2,
+        "always"
+      ],
       "no-undef": 0
     },
     "space": true,
