@@ -1,3 +1,3 @@
 // @flow
 
-export type XmppClient = Object;
+export type XmppClient = { sendMessage(textMessage: string): void };
