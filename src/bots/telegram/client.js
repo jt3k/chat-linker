@@ -15,7 +15,7 @@ import type {
 } from './telegram.h';
 
 type Context = {
-  telegram: Object,
+  telegram: Telegraf$Telegram,
   updateType: string,
   updateSubTypes?: string,
   me?: string,
@@ -30,7 +30,7 @@ type Context = {
   // editedChannelPost?: ,
   chat?: Telegram$Chat,
   from?: Telegram$User,
-  match?: ?string[],
+  match?: Array<?string>
 };
 
 const config: Config = appConfig.telegram;
@@ -73,9 +73,11 @@ class StickerMessage extends Message {
   }
 
   toString(): string {
-    let message = this.msg.text || '';
+    const { msg } = this;
 
-    const { sticker } = this.msg;
+    let message: string = msg.text || '';
+
+    const { sticker } = msg;
 
     if (!sticker) {
       return message;
@@ -121,7 +123,7 @@ class ReplyToMessage extends Message {
   }
 
   getDetails(): [string, string] {
-    const msg = this.msg;
+    const { msg } = this;
     const replyToMessage: ?Telegram$Message = msg.reply_to_message;
 
     if (!replyToMessage) {
@@ -129,7 +131,7 @@ class ReplyToMessage extends Message {
     }
 
     const nick = Name.from(replyToMessage.from);
-    const message = prepareMessage(replyToMessage);
+    const message: string = prepareMessage(replyToMessage);
 
     return [nick, message];
   }
@@ -169,11 +171,11 @@ class BotMessage extends ReplyToMessage {
   getDetails(): [string, string] {
     const { msg } = this;
 
-    const replyToMessage = msg.reply_to_message;
-    const text = replyToMessage ? (replyToMessage.text || '') : '';
-    const lineEndPos = text.indexOf('\n');
-    const _nick = text.slice(0, lineEndPos);
-    const _message = text.slice(lineEndPos + 1);
+    const replyToMessage: ?Telegram$Message = msg.reply_to_message;
+    const text: string = replyToMessage ? (replyToMessage.text || '') : '';
+    const lineEndPos: number = text.indexOf('\n');
+    const _nick: string = text.slice(0, lineEndPos);
+    const _message: string = text.slice(lineEndPos + 1);
 
     return [_nick, _message];
   }
@@ -204,7 +206,7 @@ function messageFactory(msg: Telegram$Message): Message {
 }
 
 function prepareMessage(msg: Telegram$Message): string {
-  const message = messageFactory(msg);
+  const message: Message = messageFactory(msg);
   let stringMessage = message.toString();
 
   if (msg.forward_from) {
@@ -222,24 +224,24 @@ function prepareMessage(msg: Telegram$Message): string {
 function prepareEmittingMessageDetails(
   message: Telegram$Message
 ): ?MessageEvent {
-  const room = message.chat.title || '';
+  const room: string = message.chat.title || '';
 
   if (room !== chat.title) {
     return null;
   }
 
   const name = Name.from(message.from);
-  const msg = prepareMessage(message);
+  const msg: string = prepareMessage(message);
 
   return { network: botNetwork, room, name, message: msg };
 }
 
-function onMessage(ctx: Context, next: (*) => Promise<*>) {
+function onMessage(ctx: Context, next: (*) => Promise<*>): void {
   if (!ctx.message) {
     return;
   }
 
-  const e = prepareEmittingMessageDetails(ctx.message);
+  const e: ?MessageEvent = prepareEmittingMessageDetails(ctx.message);
 
   if (e) {
     emitMessage(e);
