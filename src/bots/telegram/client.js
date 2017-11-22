@@ -14,6 +14,11 @@ import type {
   Telegram$Message
 } from './telegram.h';
 
+type Details = {
+  name: string,
+  message: string
+};
+
 type Context = {
   telegram: Telegraf$Telegram,
   updateType: string,
@@ -75,19 +80,19 @@ class StickerMessage extends Message {
   toString(): string {
     const { msg } = this;
 
-    let message: string = msg.text || '';
+    let text: string = msg.text || '';
 
     const { sticker } = msg;
 
     if (!sticker) {
-      return message;
+      return text;
     }
 
     const { emoji } = sticker;
 
-    message += emoji ? `[Sticker ${emoji}]` : '';
+    text += emoji ? `[Sticker ${emoji}]` : '';
 
-    return message;
+    return text;
   }
 }
 
@@ -97,10 +102,10 @@ class PhotoMessage extends Message {
   }
 
   toString(): string {
-    const caption = this.msg.caption || '';
-    const message = `[Photo] ${caption}`;
+    const caption: string = this.msg.caption || '';
+    const text: string = `[Photo] ${caption}`;
 
-    return message;
+    return text;
   }
 }
 
@@ -110,10 +115,10 @@ class DocumentMessage extends Message {
   }
 
   toString(): string {
-    const caption = this.msg.caption || '';
-    const message = `[Document] ${caption}`;
+    const caption: string = this.msg.caption || '';
+    const text: string = `[Document] ${caption}`;
 
-    return message;
+    return text;
   }
 }
 
@@ -122,28 +127,28 @@ class ReplyToMessage extends Message {
     return Boolean(msg.reply_to_message);
   }
 
-  getDetails(): [string, string] {
+  getDetails(): Details {
     const { msg } = this;
     const replyToMessage: ?Telegram$Message = msg.reply_to_message;
 
     if (!replyToMessage) {
-      return ['', ''];
+      throw new Error('No reply_to_message');
     }
 
-    const nick = Name.from(replyToMessage.from);
+    const name: string = Name.from(replyToMessage.from);
     const message: string = prepareMessage(replyToMessage);
 
-    return [nick, message];
+    return { name, message };
   }
 
   toString(): string {
     const { msg } = this;
-    let [nick, message] = this.getDetails();
+    let { name, message }: Details = this.getDetails();
 
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${msg.text || ''}`;
+    return `>> <${name}> ${message}\n${msg.text || ''}`;
   }
 }
 
@@ -155,29 +160,25 @@ class BotMessage extends ReplyToMessage {
       return false;
     }
 
-    const isReplyWithText = Boolean(replyToMessage.text);
+    const isReplyWithText: boolean = Boolean(replyToMessage.text);
 
-    if (!isReplyWithText) {
-      return false;
-    }
-
-    const isReplyFromOurBot = BOT_TOKEN.indexOf(
+    const isReplyFromOurBot: boolean = BOT_TOKEN.indexOf(
       replyToMessage.from.id.toString()
     ) > -1;
 
-    return isReplyFromOurBot;
+    return isReplyWithText && isReplyFromOurBot;
   }
 
-  getDetails(): [string, string] {
+  getDetails(): Details {
     const { msg } = this;
 
     const replyToMessage: ?Telegram$Message = msg.reply_to_message;
-    const text: string = replyToMessage ? (replyToMessage.text || '') : '';
+    const text: string = (replyToMessage && replyToMessage.text) || '';
     const lineEndPos: number = text.indexOf('\n');
-    const _nick: string = text.slice(0, lineEndPos);
-    const _message: string = text.slice(lineEndPos + 1);
+    const name: string = text.slice(0, lineEndPos);
+    const message: string = text.slice(lineEndPos + 1);
 
-    return [_nick, _message];
+    return { name, message };
   }
 }
 
@@ -207,18 +208,18 @@ function messageFactory(msg: Telegram$Message): Message {
 
 function prepareMessage(msg: Telegram$Message): string {
   const message: Message = messageFactory(msg);
-  let stringMessage = message.toString();
+  let text: string = message.toString();
 
   if (msg.forward_from) {
-    const nick = Name.from(msg.forward_from);
+    const name: string = Name.from(msg.forward_from);
 
     // adds quoting brackets
-    stringMessage = stringMessage.replace(/\n/g, '\n>> ');
+    text = text.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${stringMessage}`;
+    return `>> <${name}> ${text}`;
   }
 
-  return stringMessage;
+  return text;
 }
 
 function prepareEmittingMessageDetails(
@@ -230,10 +231,10 @@ function prepareEmittingMessageDetails(
     return null;
   }
 
-  const name = Name.from(message.from);
-  const msg: string = prepareMessage(message);
+  const name: string = Name.from(message.from);
+  const text: string = prepareMessage(message);
 
-  return { network: botNetwork, room, name, message: msg };
+  return { network: botNetwork, room, name, message: text };
 }
 
 function onMessage(ctx: Context, next: (*) => Promise<*>): void {
@@ -249,11 +250,15 @@ function onMessage(ctx: Context, next: (*) => Promise<*>): void {
   }
 }
 
+const updateTypes = [
+  'text',
+  'sticker',
+  'photo',
+  'document'
+];
+
 client
-  .on('text', onMessage)
-  .on('sticker', onMessage)
-  .on('photo', onMessage)
-  .on('document', onMessage)
+  .on(updateTypes, onMessage)
   .startPolling();
 
 export default client;
