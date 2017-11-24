@@ -225,16 +225,17 @@ function prepareMessage(msg: Telegram$Message): string {
 function prepareEmittingMessageDetails(
   message: Telegram$Message
 ): ?MessageEvent {
-  const room: string = message.chat.title || '';
+  const room: Telegram$Chat = message.chat;
+  const title: string = room.title || '';
 
-  if (room !== chat.title) {
+  if (room.id !== chat.id) {
     return null;
   }
 
   const name: string = Name.from(message.from);
   const text: string = prepareMessage(message);
 
-  return { network: botNetwork, room, name, message: text };
+  return { network: botNetwork, room: title, name, message: text };
 }
 
 function onMessage(ctx: Context, next: (*) => Promise<*>): void {
