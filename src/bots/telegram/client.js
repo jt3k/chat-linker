@@ -3,9 +3,7 @@
 import Telegraf from 'telegraf';
 // $FlowFixMe
 import appConfig from '../../../app-config';
-import { emitMessage } from '../../bus';
-// eslint-disable-next-line no-duplicate-imports
-import type { MessageEvent } from '../../bus';
+import { type MessageEvent, emitMessage } from '../../bus';
 import botNetwork from './network';
 
 import type { Config } from './config';
@@ -16,8 +14,13 @@ import type {
   Telegram$Message
 } from './telegram.h';
 
+type Details = {
+  name: string,
+  message: string
+};
+
 type Context = {
-  telegram: Object,
+  telegram: Telegraf$Telegram,
   updateType: string,
   updateSubTypes?: string,
   me?: string,
@@ -32,7 +35,7 @@ type Context = {
   // editedChannelPost?: ,
   chat?: Telegram$Chat,
   from?: Telegram$User,
-  match?: ?string[],
+  match?: Array<?string>
 };
 
 const config: Config = appConfig.telegram;
@@ -75,19 +78,21 @@ class StickerMessage extends Message {
   }
 
   toString(): string {
-    let message = this.msg.text || '';
+    const { msg } = this;
 
-    const { sticker } = this.msg;
+    let text: string = msg.text || '';
+
+    const { sticker } = msg;
 
     if (!sticker) {
-      return message;
+      return text;
     }
 
     const { emoji } = sticker;
 
-    message += emoji ? `[Sticker ${emoji}]` : '';
+    text += emoji ? `[Sticker ${emoji}]` : '';
 
-    return message;
+    return text;
   }
 }
 
@@ -97,10 +102,10 @@ class PhotoMessage extends Message {
   }
 
   toString(): string {
-    const caption = this.msg.caption || '';
-    const message = `[Photo] ${caption}`;
+    const caption: string = this.msg.caption || '';
+    const text: string = `[Photo] ${caption}`;
 
-    return message;
+    return text;
   }
 }
 
@@ -110,10 +115,10 @@ class DocumentMessage extends Message {
   }
 
   toString(): string {
-    const caption = this.msg.caption || '';
-    const message = `[Document] ${caption}`;
+    const caption: string = this.msg.caption || '';
+    const text: string = `[Document] ${caption}`;
 
-    return message;
+    return text;
   }
 }
 
@@ -122,28 +127,28 @@ class ReplyToMessage extends Message {
     return Boolean(msg.reply_to_message);
   }
 
-  getDetails(): [string, string] {
-    const msg = this.msg;
+  getDetails(): Details {
+    const { msg } = this;
     const replyToMessage: ?Telegram$Message = msg.reply_to_message;
 
     if (!replyToMessage) {
-      return ['', ''];
+      throw new Error('No reply_to_message');
     }
 
-    const nick = Name.from(replyToMessage.from);
-    const message = prepareMessage(replyToMessage);
+    const name: string = Name.from(replyToMessage.from);
+    const message: string = prepareMessage(replyToMessage);
 
-    return [nick, message];
+    return { name, message };
   }
 
   toString(): string {
     const { msg } = this;
-    let [nick, message] = this.getDetails();
+    let { name, message }: Details = this.getDetails();
 
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${message}\n${msg.text || ''}`;
+    return `>> <${name}> ${message}\n${msg.text || ''}`;
   }
 }
 
@@ -155,29 +160,25 @@ class BotMessage extends ReplyToMessage {
       return false;
     }
 
-    const isReplyWithText = Boolean(replyToMessage.text);
+    const isReplyWithText: boolean = Boolean(replyToMessage.text);
 
-    if (!isReplyWithText) {
-      return false;
-    }
-
-    const isReplyFromOurBot = BOT_TOKEN.indexOf(
+    const isReplyFromOurBot: boolean = BOT_TOKEN.indexOf(
       replyToMessage.from.id.toString()
     ) > -1;
 
-    return isReplyFromOurBot;
+    return isReplyWithText && isReplyFromOurBot;
   }
 
-  getDetails(): [string, string] {
+  getDetails(): Details {
     const { msg } = this;
 
-    const replyToMessage = msg.reply_to_message;
-    const text = replyToMessage ? (replyToMessage.text || '') : '';
-    const lineEndPos = text.indexOf('\n');
-    const _nick = text.slice(0, lineEndPos);
-    const _message = text.slice(lineEndPos + 1);
+    const replyToMessage: ?Telegram$Message = msg.reply_to_message;
+    const text: string = (replyToMessage && replyToMessage.text) || '';
+    const lineEndPos: number = text.indexOf('\n');
+    const name: string = text.slice(0, lineEndPos);
+    const message: string = text.slice(lineEndPos + 1);
 
-    return [_nick, _message];
+    return { name, message };
   }
 }
 
@@ -194,54 +195,54 @@ function messageFactory(msg: Telegram$Message): Message {
     return new DocumentMessage(msg);
   }
 
-  if (!ReplyToMessage.test(msg)) {
-    return new Message(msg);
-  }
-
   if (BotMessage.test(msg)) {
     return new BotMessage(msg);
   }
 
-  return new ReplyToMessage(msg);
+  if (ReplyToMessage.test(msg)) {
+    return new ReplyToMessage(msg);
+  }
+
+  return new Message(msg);
 }
 
 function prepareMessage(msg: Telegram$Message): string {
-  const message = messageFactory(msg);
-  let stringMessage = message.toString();
+  const message: Message = messageFactory(msg);
+  let text: string = message.toString();
 
   if (msg.forward_from) {
-    const nick = Name.from(msg.forward_from);
+    const name: string = Name.from(msg.forward_from);
 
     // adds quoting brackets
-    stringMessage = stringMessage.replace(/\n/g, '\n>> ');
+    text = text.replace(/\n/g, '\n>> ');
 
-    return `>> <${nick}> ${stringMessage}`;
+    return `>> <${name}> ${text}`;
   }
 
-  return stringMessage;
+  return text;
 }
 
 function prepareEmittingMessageDetails(
   message: Telegram$Message
 ): ?MessageEvent {
-  const room = message.chat.title || '';
+  const room: string = message.chat.title || '';
 
   if (room !== chat.title) {
     return null;
   }
 
-  const name = Name.from(message.from);
-  const msg = prepareMessage(message);
+  const name: string = Name.from(message.from);
+  const text: string = prepareMessage(message);
 
-  return { network: botNetwork, room, name, message: msg };
+  return { network: botNetwork, room, name, message: text };
 }
 
-function onMessage(ctx: Context, next: (*) => Promise<*>) {
+function onMessage(ctx: Context, next: (*) => Promise<*>): void {
   if (!ctx.message) {
     return;
   }
 
-  const e = prepareEmittingMessageDetails(ctx.message);
+  const e: ?MessageEvent = prepareEmittingMessageDetails(ctx.message);
 
   if (e) {
     emitMessage(e);
@@ -249,11 +250,15 @@ function onMessage(ctx: Context, next: (*) => Promise<*>) {
   }
 }
 
+const updateTypes = [
+  'text',
+  'sticker',
+  'photo',
+  'document'
+];
+
 client
-  .on('text', onMessage)
-  .on('sticker', onMessage)
-  .on('photo', onMessage)
-  .on('document', onMessage)
+  .on(updateTypes, onMessage)
   .startPolling();
 
 export default client;

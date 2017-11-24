@@ -1,11 +1,9 @@
 // @flow
 
+import type { XmppOptions } from 'node-xmpp-client';
+
 export type Config = {
-  connection: {
-    jid: string,
-    password: string,
-    reconnect: boolean
-  },
+  connection: XmppOptions,
   dev: {
     room: string,
     nick: string,

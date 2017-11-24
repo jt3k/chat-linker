@@ -1,9 +1,9 @@
 // @flow
 
-import xmpp from 'node-xmpp';
+import { Client, Element, JID, type Stanza } from 'node-xmpp-client';
 // $FlowFixMe
 import appConfig from '../../../app-config';
-import { emitMessage } from '../../bus';
+import { type MessageEvent, emitMessage } from '../../bus';
 import botNetwork from './network';
 
 import type { Config } from './config';
@@ -11,90 +11,109 @@ import type { XmppClient } from './types';
 
 const config: Config = appConfig.jabber;
 
-const { JID } = xmpp;
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
-const { connection } = config;
+const { connection: options } = config;
 
-const client: XmppClient = new xmpp.Client(connection);
+const client = new Client(options);
 
 // Keep alive
 const { socket } = client.connection;
 socket.setTimeout(0);
 socket.setKeepAlive(true, 10000);
 
-client.on('error', function () {
-  console.log('arguments', arguments);
+client.on('error', (...args: [any, any]) => {
+  console.log('XMPP error:', ...args);
 });
 
 client.on('online', () => {
-  console.log('online');
-  client.send(new xmpp.Element('presence', {
+  console.log('XMPP: online');
+
+  const element = new Element('presence', {
     to: `${chat.room}/${chat.nick}`
-  })
-    .c('x', {
-      xmlns: 'http://jabber.org/protocol/muc'
-    }));
+  }).c('x', { xmlns: 'http://jabber.org/protocol/muc' });
+
+  client.send(element);
 });
 
+// global for debugging
 global.sss = [];
 global.eee = [];
 
-client.on('stanza', stanza => {
+client.on('stanza', (stanza: Stanza): void => {
   try {
-    let message = stanza.is('message') && stanza.getChildElements().find(item => item.is('body'));
+    if (!stanza.is('message')) {
+      return;
+    }
+
+    const message: ?Element = stanza
+      .getChildElements()
+      .find((item: Element) => item.is('body'));
+
+    const from: string = stanza.attr('from');
 
     const isGroupchat = stanza.type === 'groupchat';
-    const isNotSelfMsg = stanza.attr('from') !== `${chat.room}/${chat.nick}`;
+    const isNotSelfMsg = from !== `${chat.room}/${chat.nick}`;
     const isNotDelay = !stanza.children.find(item => item.name === 'delay');
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
-      message = message.getText();
+      const text: string = message.getText();
 
-      const from = new JID(stanza.attr('from'));
-      const room = `${from.getLocal()}@${from.getDomain()}`;
-      const name = from.getResource();
+      const jid = new JID(from);
+      const room: string = `${jid.getLocal()}@${jid.getDomain()}`;
+      const name: string = jid.getResource();
       const network = botNetwork;
 
-      emitMessage({ network, room, name, message });
+      const e: MessageEvent = { network, room, name, message: text };
+
+      emitMessage(e);
     }
   } catch (err) {
+    console.error(err);
+
     global.sss.push(stanza);
     global.eee.push(err);
-    console.error(err);
   }
 });
 
 if (chat.pingMs) {
-  const jid = config.connection.jid.toString();
-  const server = new xmpp.JID(jid).getDomain();
+  const jid: string = options.jid.toString();
+  const server: string = new JID(jid).getDomain();
 
-  let pingCounter = 0;
-  const schedulePing = () => {
-    const iq = new xmpp.Element('iq', {
+  let pingCounter: number = 0;
+
+  const schedulePing = (): void => {
+    const iq = new Element('iq', {
       type: 'get',
       to: server,
       from: jid,
       id: `ping${pingCounter++}`
     }).c('ping', { xmlns: 'urn:xmpp:ping' });
+
     client.send(iq);
 
     setTimeout(schedulePing, chat.pingMs);
   };
+
   schedulePing();
 }
 
-client.sendMessage = function (textMessage) {
-  return client.send(
-    new xmpp.Element(
+const xmppClient: XmppClient = {
+  sendMessage(textMessage: string): void {
+    const message: Element = new Element(
       'message',
       {
         to: chat.room,
         type: 'groupchat'
       }
-    )
-    .c('body')
-    .t(textMessage));
+    );
+
+    client.send(
+      message
+        .c('body')
+        .t(textMessage)
+    );
+  }
 };
 
-export default client;
+export default xmppClient;
