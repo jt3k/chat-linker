@@ -72,8 +72,9 @@ $ node ./node_modules/husky/bin/install.js
 
 ### Discussion
 
-- telegram: [@javascript_ru](https://t.me/javascript_ru) (RU)
-- XMPP: [javascript@conference.jabber.ru](xmpp://javascript@conference.jabber.ru?join) (RU)
+- dev-chat: [@chat_linker](https://t.me/chat_linker) (RU)
+- demo telegram-side: [@javascript_ru](https://t.me/javascript_ru) (RU)
+- demo XMPP-side: [javascript@conference.jabber.ru](xmpp://javascript@conference.jabber.ru?join) (RU)
 
 
 [bots-docs]: https://core.telegram.org/bots#3-how-do-i-create-a-bot
