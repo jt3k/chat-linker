@@ -42,7 +42,7 @@ const config: Config = appConfig.telegram;
 
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
-const { BOT_TOKEN } = config;
+const { BOT_TOKEN, quoteLength } = config;
 
 const client = new Telegraf(BOT_TOKEN);
 
@@ -145,6 +145,8 @@ class ReplyToMessage extends Message {
     const { msg } = this;
     let { name, message }: Details = this.getDetails();
 
+    message = prepareQuote(message);
+
     // adds quoting brackets
     message = message.replace(/\n/g, '\n>> ');
 
@@ -213,6 +215,8 @@ function prepareMessage(msg: Telegram$Message): string {
   if (msg.forward_from) {
     const name: string = Name.from(msg.forward_from);
 
+    text = prepareQuote(text);
+
     // adds quoting brackets
     text = text.replace(/\n/g, '\n>> ');
 
@@ -220,6 +224,17 @@ function prepareMessage(msg: Telegram$Message): string {
   }
 
   return text;
+}
+
+function prepareQuote(quote) {
+  if (!quoteLength) {
+    return quote;
+  }
+
+  const prepared = quote
+    .split('\n').slice(0, 3).join('\n').slice(0, quoteLength);
+  const isMatched = prepared === quote;
+  return prepared + (isMatched ? '' : '...');
 }
 
 function prepareEmittingMessageDetails(
