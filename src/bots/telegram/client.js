@@ -229,8 +229,12 @@ function prepareQuote(quote: string): string {
     return quote;
   }
 
-  const prepared = quote
-    .split('\n').slice(0, 3).join('\n').slice(0, quoteLength);
+  // get first three lines
+  let prepared = quote.split('\n').slice(0, 3).join('\n');
+
+  // cut out an unnecessary tail
+  prepared = prepared.slice(0, quoteLength);
+
   const isMatched = prepared === quote;
   return prepared + (isMatched ? '' : '...');
 }
