@@ -236,7 +236,9 @@ function prepareQuote(quote: string): string {
   prepared = prepared.slice(0, quoteLength);
 
   const isMatched = prepared === quote;
-  return prepared + (isMatched ? '' : '...');
+  const ellipsisChar = '\u2026';
+
+  return prepared + (isMatched ? '' : ellipsisChar);
 }
 
 function prepareEmittingMessageDetails(
