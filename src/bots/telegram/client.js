@@ -226,7 +226,7 @@ function prepareMessage(msg: Telegram$Message): string {
   return text;
 }
 
-function prepareQuote(quote) {
+function prepareQuote(quote: string): string {
   if (!quoteLength) {
     return quote;
   }
