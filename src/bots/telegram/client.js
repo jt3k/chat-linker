@@ -215,8 +215,6 @@ function prepareMessage(msg: Telegram$Message): string {
   if (msg.forward_from) {
     const name: string = Name.from(msg.forward_from);
 
-    text = prepareQuote(text);
-
     // adds quoting brackets
     text = text.replace(/\n/g, '\n>> ');
 
