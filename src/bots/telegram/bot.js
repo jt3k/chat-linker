@@ -29,9 +29,14 @@ class TelegramBot implements Bot {
     message = htmlEscape(message);
     name = htmlEscape(name);
 
-    const textMessage = (config.messageTemplate || '<b>{name}</b>\n{message}')
-      .replace('{name}', name)
-      .replace('{message}', message);
+    const template = config.messageTemplate || '<b>{name}</b>\n{message}';
+    const textMessage = template.replace(/{.*?}/g, tag => {
+      switch (tag) {
+        case '{name}': return name;
+        case '{message}': return message;
+        default: return tag;
+      }
+    });
 
     this.client.telegram.sendMessage(
       chat.id,
