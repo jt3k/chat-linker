@@ -47,16 +47,24 @@ const { BOT_TOKEN } = config;
 const client = new Telegraf(BOT_TOKEN);
 
 class Name {
-  static from(user: Telegram$User): string {
-    if (user.username) {
-      return user.username;
+  static from(author: Telegram$User | Telegram$Chat): string {
+    if (author.username) {
+      return author.username;
     }
 
-    if (user.last_name) {
-      return `${user.first_name} ${user.last_name}`;
+    if (author.title) {
+      return author.title;
     }
 
-    return user.first_name;
+    if (author.first_name) {
+      if (author.last_name) {
+        return `${author.first_name} ${author.last_name}`;
+      }
+
+      return author.first_name;
+    }
+
+    return `[Chat ${author.id}]`;
   }
 }
 
@@ -210,8 +218,10 @@ function prepareMessage(msg: Telegram$Message): string {
   const message: Message = messageFactory(msg);
   let text: string = message.toString();
 
-  if (msg.forward_from) {
-    const name: string = Name.from(msg.forward_from);
+  const forwardFrom = msg.forward_from || msg.forward_from_chat;
+
+  if (forwardFrom) {
+    const name: string = Name.from(forwardFrom);
 
     // adds quoting brackets
     text = text.replace(/\n/g, '\n>> ');
