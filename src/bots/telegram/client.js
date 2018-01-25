@@ -56,12 +56,10 @@ class Name {
       return author.title;
     }
 
-    if (author.first_name) {
-      if (author.last_name) {
-        return `${author.first_name} ${author.last_name}`;
-      }
+    const names = [author.first_name, author.last_name].filter(x => x);
 
-      return author.first_name;
+    if (names.length > 0) {
+      return names.join(' ');
     }
 
     return `[Chat ${author.id}]`;
