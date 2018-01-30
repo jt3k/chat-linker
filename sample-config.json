@@ -2,18 +2,17 @@
   "jabber": {
     "connection": {
       "jid": "SECRET",
-      "password": "SECRET",
-      "reconnect": true
+      "password": "SECRET"
     },
     "dev": {
       "room": "bimo_test@conference.jabber.ru",
       "nick": "tg",
-      "pingMs": 60000
+      "pingMs": 30000
     },
     "prod": {
       "room": "javascript@conference.jabber.ru",
       "nick": "tg",
-      "pingMs": 60000
+      "pingMs": 30000
     },
     "messageTemplate": "<@{name}> {message}"
   },

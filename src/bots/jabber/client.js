@@ -15,6 +15,8 @@ const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
 const { connection: options } = config;
 
+options.reconnect = false;
+
 const client = new Client(options);
 
 // Keep alive
@@ -22,8 +24,11 @@ const { socket } = client.connection;
 socket.setTimeout(0);
 socket.setKeepAlive(true, 10000);
 
-client.on('error', (...args: [any, any]) => {
-  console.log('XMPP error:', ...args);
+client.on('error', (err: string | Error) => {
+  console.error('XMPP error:', err);
+
+  // reconnect
+  setTimeout(() => client.connect(), 1000);
 });
 
 client.on('online', () => {
@@ -34,6 +39,10 @@ client.on('online', () => {
   }).c('x', { xmlns: 'http://jabber.org/protocol/muc' });
 
   client.send(element);
+});
+
+client.on('offline', () => {
+  console.log('XMPP: offline');
 });
 
 // global for debugging
