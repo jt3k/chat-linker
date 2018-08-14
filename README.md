@@ -28,8 +28,7 @@ To determine Telegram room parameters, follow the procedure:
 2. It's essential to **disable** [Privacy mode][privacy-mode] to make the bot to
    observe all messages in the room
 3. Manually add a bot to the room (using Telegram's invite functionality)
-4. Send a message to the bot **directly**, e.g. `/my_id @bot_user_id`
-5. Visit `https://api.telegram.org/bot<bot_api_key>/getUpdates` and extract
+4. Visit `https://api.telegram.org/bot<bot_api_key>/getUpdates` and extract
    `"chat"` object from there. E.g.
 
    ```json
@@ -81,6 +80,20 @@ $ node ./node_modules/husky/bin/install.js
 [bots-docs]: https://core.telegram.org/bots#3-how-do-i-create-a-bot
 [privacy-mode]: https://core.telegram.org/bots#privacy-mode
 
+## FAQ
+
+Does it support bridging for the one room, with a single bot?
+ - No, it's not yet supported
+ 
+It only supports supergroups from telegram? Which other types of chats are supported?
+ - 
+
+The bridge only works xmpp -> telegram, not telegram -> xmpp.
+ - Remove the bot from the telegram chat, and invite it again.
+
+I can't find any id from group when i go to `https://api.telegram.org/bot<bot_api_key>/getUpdates`
+ - You have to convert your group to a supergroup on telegram, go to "Manage Group" -> "Convert to supergroup"
+ 
 ## License
 
 MIT © [Andrey Gurtovoy](https://github.com/jt3k)
