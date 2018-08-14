@@ -83,16 +83,16 @@ $ node ./node_modules/husky/bin/install.js
 
 ## FAQ
 
-Does it support bridging more than one room with a single bot?
+**Does it support bridging more than one room with a single bot?**
  - No, it's not yet supported
  
-It only supports supergroups from telegram? Which other types of chats are supported?
- - It supports any type of group
+**What types of Telegram groups are supported?**
+ - The bot supports ordinary groups as well as supergroups.
 
-The bridge only works xmpp -> telegram, not telegram -> xmpp.
- - Remove the bot from the telegram chat, and invite it again.
+**The bridge only works XMPP -> Telegram, not Telegram -> XMPP.**
+ - Check the bot privacy settings, then remove the bot from the Telegram chat, and invite it again.
 
-I can't find any id from my room when i go to `https://api.telegram.org/bot<bot_api_key>/getUpdates`
+**I can't find any id from my room when I go to `https://api.telegram.org/bot<bot_api_key>/getUpdates`**
  - Sometimes the reply to this request is empty, keep on trying.
  
 ## License
