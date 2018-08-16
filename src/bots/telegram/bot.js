@@ -4,6 +4,7 @@ import Telegraf from 'telegraf';
 import type { Bot } from '../../bot';
 import type { Config } from './config';
 import botNetwork from './network';
+import type { MessageEvent } from '../../bus';
 
 // html-escaping only for telegram
 const htmlEscape = str => str
@@ -28,7 +29,7 @@ class TelegramBot implements Bot {
 
     if (!destinationRoomId) {
       console.log('TELEGRAM: This message had no destination room id: ' + JSON.stringify(messageEvent));
-      return null;
+      return;
     }
     const message = htmlEscape(messageEvent.message);
     const name = htmlEscape(messageEvent.name);

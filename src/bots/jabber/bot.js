@@ -3,6 +3,7 @@
 import type { Bot } from '../../bot';
 import type { Config } from './config';
 import type { XmppClient } from './types';
+import type { MessageEvent } from '../../bus';
 
 import botNetwork from './network';
 
