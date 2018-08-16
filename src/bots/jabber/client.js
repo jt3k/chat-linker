@@ -42,7 +42,7 @@ client.on('online', () => {
       console.log(`XMPP: Joininig ${room.xmpp}/${nick}`);
       client.send(element);
     }
-  )
+  );
 });
 
 client.on('offline', () => {
