@@ -11,11 +11,11 @@ import type { XmppClient } from './types';
 
 const config: Config = appConfig.jabber;
 
-const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
+const pingMs = appConfig.jabber.pingMs;
+const nick = appConfig.jabber.nick;
+const rooms = appConfig.rooms[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
 const { connection: options } = config;
-
-options.reconnect = false;
 
 const client = new Client(options);
 
@@ -34,11 +34,15 @@ client.on('error', (err: string | Error) => {
 client.on('online', () => {
   console.log('XMPP: online');
 
-  const element = new Element('presence', {
-    to: `${chat.room}/${chat.nick}`
-  }).c('x', { xmlns: 'http://jabber.org/protocol/muc' });
-
-  client.send(element);
+  rooms.forEach(
+    room => {
+      const element = new Element('presence', {
+        to: `${room.xmpp}/${nick}`
+      }).c('x', { xmlns: 'http://jabber.org/protocol/muc' });
+      console.log('XMPP: Joininig ' + `${room.xmpp}/${nick}`)
+      client.send(element);
+    }
+  )
 });
 
 client.on('offline', () => {
@@ -62,7 +66,7 @@ client.on('stanza', (stanza: Stanza): void => {
     const from: string = stanza.attr('from');
 
     const isGroupchat = stanza.type === 'groupchat';
-    const isNotSelfMsg = from !== `${chat.room}/${chat.nick}`;
+    const isNotSelfMsg = ! rooms.find(room => `${room.xmpp}/${nick}` == from);
     const isNotDelay = !stanza.children.find(item => item.name === 'delay');
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
@@ -72,8 +76,10 @@ client.on('stanza', (stanza: Stanza): void => {
       const room: string = `${jid.getLocal()}@${jid.getDomain()}`;
       const name: string = jid.getResource();
       const network = botNetwork;
+      let destinationRoomTelegramId = rooms.find(item => item.xmpp === room).telegramId;
 
-      const e: MessageEvent = { network, room, name, message: text };
+      const e: MessageEvent = { network, room, name, message: text, destinationRoom: destinationRoomTelegramId };
+
 
       emitMessage(e);
     }
@@ -85,7 +91,7 @@ client.on('stanza', (stanza: Stanza): void => {
   }
 });
 
-if (chat.pingMs) {
+if (pingMs) {
   const jid: string = options.jid.toString();
   const server: string = new JID(jid).getDomain();
 
@@ -101,18 +107,18 @@ if (chat.pingMs) {
 
     client.send(iq);
 
-    setTimeout(schedulePing, chat.pingMs);
+    setTimeout(schedulePing, pingMs);
   };
 
   schedulePing();
 }
 
 const xmppClient: XmppClient = {
-  sendMessage(textMessage: string): void {
+  sendMessage(textMessage: string, xmppRoom: string): void {
     const message: Element = new Element(
       'message',
       {
-        to: chat.room,
+        to: xmppRoom,
         type: 'groupchat'
       }
     );

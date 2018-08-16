@@ -40,7 +40,9 @@ type Context = {
 
 const config: Config = appConfig.telegram;
 
+
 const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
+const rooms = appConfig.rooms[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
 const { BOT_TOKEN } = config;
 
@@ -236,14 +238,16 @@ function prepareEmittingMessageDetails(
   const room: Telegram$Chat = message.chat;
   const title: string = room.title || '';
 
-  if (room.id !== chat.id) {
+  const destinationRoom = rooms.find(item => item.telegramId === room.id).xmpp;
+
+  if (!destinationRoom) {
+    console.log(`Could not find destination room ${room.id}`);
     return null;
   }
-
   const name: string = Name.from(message.from);
   const text: string = prepareMessage(message);
 
-  return { network: botNetwork, room: title, name, message: text };
+  return { network: botNetwork, room: title, name, message: text, destinationRoom };
 }
 
 function onMessage(ctx: Context, next: (*) => Promise<*>): void {

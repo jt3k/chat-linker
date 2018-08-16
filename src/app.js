@@ -20,14 +20,11 @@ Object.keys(bots).forEach(k => {
   }
 });
 
-bus.on('message', ({ network, room, name, message }: MessageEvent) => {
-  const botsToPropagateMsg = botsList.filter(bot => bot.network !== network);
+bus.on('message', (messageEvent: MessageEvent) => {
+  const botsToPropagateMsg = botsList.filter(bot => bot.network !== messageEvent.network);
 
-  botsToPropagateMsg.forEach(bot => {
-    bot.send({ name, message, room });
-  });
-
+  botsToPropagateMsg.forEach(bot => bot.send(messageEvent));
   if (__DEV__) {
-    console.log(`${Symbol.keyFor(network) || ''} "${room}": <${name}> ${message}`);
+    console.log(`${Symbol.keyFor(messageEvent.network) || ''} "${messageEvent.room}": <${messageEvent.name}> ${messageEvent.message}`);
   }
 });
