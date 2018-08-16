@@ -24,14 +24,14 @@ class TelegramBot implements Bot {
 
   send(messageEvent: MessageEvent): void {
     const { config } = this;
-    let destinationRoomId = messageEvent.destinationRoom;
+    const destinationRoomId = messageEvent.destinationRoom;
 
     if (!destinationRoomId) {
       console.log('TELEGRAM: This message had no destination room id: ' + JSON.stringify(messageEvent));
       return null;
     }
-    let message = htmlEscape(messageEvent.message);
-    let name = htmlEscape(messageEvent.name);
+    const message = htmlEscape(messageEvent.message);
+    const name = htmlEscape(messageEvent.name);
 
     const template = config.messageTemplate || '<b>{name}</b>\n{message}';
     const textMessage = template.replace(/{.*?}/g, tag => {

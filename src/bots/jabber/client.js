@@ -39,7 +39,7 @@ client.on('online', () => {
       const element = new Element('presence', {
         to: `${room.xmpp}/${nick}`
       }).c('x', { xmlns: 'http://jabber.org/protocol/muc' });
-      console.log('XMPP: Joininig ' + `${room.xmpp}/${nick}`)
+      console.log(`XMPP: Joininig ${room.xmpp}/${nick}`);
       client.send(element);
     }
   )
@@ -66,7 +66,7 @@ client.on('stanza', (stanza: Stanza): void => {
     const from: string = stanza.attr('from');
 
     const isGroupchat = stanza.type === 'groupchat';
-    const isNotSelfMsg = ! rooms.find(room => `${room.xmpp}/${nick}` == from);
+    const isNotSelfMsg = !rooms.find(room => `${room.xmpp}/${nick}` === from);
     const isNotDelay = !stanza.children.find(item => item.name === 'delay');
 
     if (isNotDelay && message && isGroupchat && isNotSelfMsg) {
@@ -76,10 +76,8 @@ client.on('stanza', (stanza: Stanza): void => {
       const room: string = `${jid.getLocal()}@${jid.getDomain()}`;
       const name: string = jid.getResource();
       const network = botNetwork;
-      let destinationRoomTelegramId = rooms.find(item => item.xmpp === room).telegramId;
-
+      const destinationRoomTelegramId = rooms.find(item => item.xmpp === room).telegramId;
       const e: MessageEvent = { network, room, name, message: text, destinationRoom: destinationRoomTelegramId };
-
 
       emitMessage(e);
     }

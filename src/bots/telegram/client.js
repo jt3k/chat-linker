@@ -39,9 +39,6 @@ type Context = {
 };
 
 const config: Config = appConfig.telegram;
-
-
-const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 const rooms = appConfig.rooms[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 
 const { BOT_TOKEN } = config;
