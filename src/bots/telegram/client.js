@@ -235,7 +235,7 @@ function prepareEmittingMessageDetails(
   const room: Telegram$Chat = message.chat;
   const title: string = room.title || '';
 
-  const destinationRoom = rooms.find(item => item.telegramId === room.id).xmpp;
+  const destinationRoom = rooms.find(item => item.telegramId === room.id);
 
   if (!destinationRoom) {
     console.log(`Could not find destination room ${room.id}`);
@@ -243,8 +243,9 @@ function prepareEmittingMessageDetails(
   }
   const name: string = Name.from(message.from);
   const text: string = prepareMessage(message);
+  const destinationRoomAddress = destinationRoom.xmpp;
 
-  return { network: botNetwork, room: title, name, message: text, destinationRoom };
+  return { network: botNetwork, room: title, name, message: text, destinationRoom: destinationRoomAddress };
 }
 
 function onMessage(ctx: Context, next: (*) => Promise<*>): void {
