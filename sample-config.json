@@ -24,6 +24,6 @@
   },
   "telegram": {
     "BOT_TOKEN": "SECRET",
-    "messageTemplate": "<b>{name}</b>@<a href='https://conversations.im/j/{room}@{network}'>{room}</a>:<br/>{message}"
+    "messageTemplate": "<b>{name}</b>@<a href='https://conversations.im/j/{room}@{network}'>{room}</a>:\n\r{message}"
   }
 }
