@@ -48,7 +48,7 @@ class TelegramBot implements Bot {
     this.client.telegram.sendMessage(
       destinationRoomId,
       textMessage,
-      { parse_mode: 'Markdown' }
+      { parse_mode: 'HTML' }
     );
   }
 }
