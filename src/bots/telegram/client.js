@@ -1,6 +1,7 @@
 // @flow
 
 import Telegraf from 'telegraf';
+import imgurUploader from 'imgur-uploader';
 // $FlowFixMe
 import appConfig from '../../../app-config';
 import { type MessageEvent, emitMessage } from '../../bus';
