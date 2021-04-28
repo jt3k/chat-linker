@@ -29,6 +29,7 @@
       "username": "javascript_ru",
       "type": "supergroup"
     },
-    "messageTemplate": "<b>{name}</b>\n{message}"
+    "messageTemplate": "<b>{name}</b>\n{message}",
+    "quoteLength": 140
   }
 }

@@ -6,5 +6,6 @@ export type Config = {
   BOT_TOKEN: string,
   dev: Telegram$Chat,
   prod: Telegram$Chat,
-  messageTemplate: string
+  messageTemplate: string,
+  quoteLength?: number,
 };
