@@ -1,6 +1,10 @@
 // @flow
 
+import https from 'https';
 import Telegraf from 'telegraf';
+import imgurUploader from 'imgur-uploader';
+
+
 // $FlowFixMe
 import appConfig from '../../../app-config';
 import { type MessageEvent, emitMessage } from '../../bus';
@@ -45,6 +49,40 @@ const chat = config[process.env.NODE_ENV === 'prod' ? 'prod' : 'dev'];
 const { BOT_TOKEN } = config;
 
 const client = new Telegraf(BOT_TOKEN);
+
+const getBuffer = (source: string): Promise<Buffer> => new Promise((resolve, reject) => {
+  https.get(source, (response) => {
+    const data = []
+
+    response
+      .on('data', (chunk) => {
+        data.push(chunk)
+      })
+      .on('end', () => {
+        resolve(Buffer.concat(data))
+      })
+      .on('error', (err) => {
+        reject(err)
+      })
+  })
+})
+
+const getFileId = (message: Telegram$Message, type: string): string => {
+  switch (type) {
+    case 'photo': return message[type][message.photo.length - 1].file_id
+    case 'document': return message[type].file_id
+    default: return ''
+  }
+}
+
+const uploadImage = async (ctx: Context) => {
+  const fileId = getFileId(ctx.message, ctx.updateSubTypes[0])
+  const fileLink = fileId && await ctx.telegram.getFileLink(fileId)
+  const buffer = await getBuffer(fileLink)
+  const data = await uploader(ctx.session.buffer)
+
+  return data.link
+}
 
 class Name {
   static from(author: Telegram$User | Telegram$Chat): string {
