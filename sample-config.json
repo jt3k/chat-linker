@@ -1,34 +1,29 @@
 {
+  "rooms":
+  {
+      "dev": [
+      {
+        "xmpp": "bimo_test@conference.jabber.ru",
+        "telegramId": -310606513
+      },
+      {
+        "xmpp": "javascript@conference.jabber.ru",
+        "telegramId": -1001161009393
+      }
+      ],
+      "prod": []
+  },
   "jabber": {
     "connection": {
       "jid": "SECRET",
       "password": "SECRET"
     },
-    "dev": {
-      "room": "bimo_test@conference.jabber.ru",
-      "nick": "tg",
-      "pingMs": 30000
-    },
-    "prod": {
-      "room": "javascript@conference.jabber.ru",
-      "nick": "tg",
-      "pingMs": 30000
-    },
-    "messageTemplate": "<@{name}> {message}"
+    "pingMs": 30000,
+    "nick": "tg",
+    "messageTemplate": "{name}@{room}@telegram:\n\r{message}"
   },
   "telegram": {
     "BOT_TOKEN": "SECRET",
-    "dev": {
-      "id": -1001054401089,
-      "title": "bimo_test",
-      "type": "supergroup"
-    },
-    "prod": {
-      "id": -1001050591912,
-      "title": "javascript",
-      "username": "javascript_ru",
-      "type": "supergroup"
-    },
-    "messageTemplate": "<b>{name}</b>\n{message}"
+    "messageTemplate": "<b>{name}</b>@<a href='https://conversations.im/j/{room}@{network}'>{room}</a>:\n\r{message}"
   }
 }

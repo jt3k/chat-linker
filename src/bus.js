@@ -10,7 +10,8 @@ export type MessageEvent = {
   network: Symbol,
   room: string,
   name: string,
-  message: string
+  message: string,
+  destinationRoom: string
 };
 
 class Emitter extends EventEmitter {}
